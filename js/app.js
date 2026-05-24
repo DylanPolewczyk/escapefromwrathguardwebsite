@@ -5,7 +5,7 @@
     const BOARD_HEIGHT = 1820;
     const BOARD_SIDE_PADDING = 0.06;
     const BOARD_TOP_PADDING = 0.065;
-    const BOARD_X_SPREAD = 1.18;
+    const BOARD_X_SPREAD = 1.30;
     const BOARD_Y_SPREAD = 1.12;
     const TOOLTIP_HIDE_DELAY_MS = 120;
 

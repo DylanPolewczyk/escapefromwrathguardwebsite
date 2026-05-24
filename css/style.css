@@ -557,6 +557,7 @@ button {
 }
 
 .talent-board {
+    flex: 0 0 auto;
     position: relative;
     width: var(--board-width, 1760px);
     height: var(--board-height, 1820px);
