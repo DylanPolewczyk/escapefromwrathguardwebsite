@@ -91,9 +91,10 @@
     function initializeTreePage() {
         const classId = getRequestedClassId();
         bindViewerButtons();
-        window.addEventListener("resize", scheduleConnectionRender);
+        bindTooltipDismiss();
+        window.addEventListener("resize", handleBoardResize);
         if (document.fonts && document.fonts.ready) {
-            document.fonts.ready.then(scheduleConnectionRender).catch(function () {});
+            document.fonts.ready.then(handleBoardResize).catch(function () {});
         }
 
         const tree = findTree(classId) || state.data.classes[0];
@@ -151,9 +152,35 @@
                 persistPreviewRanks();
                 renderTreeStats();
                 renderBoard();
-                renderSelectedPanel();
             });
         }
+    }
+
+    function bindTooltipDismiss() {
+        document.addEventListener("click", handleTooltipDocumentClick);
+        document.addEventListener("keydown", handleTooltipEscape);
+    }
+
+    function handleTooltipDocumentClick(event) {
+        if (!state.selectedNodeId) {
+            return;
+        }
+
+        if (event.target.closest(".talent-node") || event.target.closest(".node-tooltip")) {
+            return;
+        }
+
+        state.selectedNodeId = null;
+        renderBoard();
+    }
+
+    function handleTooltipEscape(event) {
+        if (event.key !== "Escape" || !state.selectedNodeId) {
+            return;
+        }
+
+        state.selectedNodeId = null;
+        renderBoard();
     }
 
     function getRequestedClassId() {
@@ -170,9 +197,8 @@
         state.tree = tree;
         ensurePreviewClassBucket(tree.classId);
 
-        if (!getNodeById(state.selectedNodeId)) {
-            const firstNode = getVisibleNodes(tree)[0];
-            state.selectedNodeId = firstNode ? firstNode.id : null;
+        if (state.selectedNodeId && !getNodeById(state.selectedNodeId)) {
+            state.selectedNodeId = null;
         }
 
         const params = new URLSearchParams(window.location.search);
@@ -183,7 +209,6 @@
         renderHero();
         renderTreeStats();
         renderBoard();
-        renderSelectedPanel();
     }
 
     function renderClassRail() {
@@ -282,7 +307,12 @@
             board.appendChild(element);
         });
 
-        scheduleConnectionRender();
+        const selectedNode = getSelectedNode();
+        if (selectedNode) {
+            board.appendChild(renderNodeTooltip(selectedNode));
+        }
+
+        applyBoardFit();
     }
 
     function renderNode(node) {
@@ -350,13 +380,124 @@
         button.appendChild(header);
         button.appendChild(title);
         button.appendChild(pips);
-        button.addEventListener("click", function () {
-            state.selectedNodeId = node.id;
+        button.addEventListener("click", function (event) {
+            event.stopPropagation();
+            state.selectedNodeId = state.selectedNodeId === node.id ? null : node.id;
             renderBoard();
-            renderSelectedPanel();
         });
 
         return button;
+    }
+
+    function renderNodeTooltip(node) {
+        const previewRank = getPreviewRank(node.id);
+        const tooltip = document.createElement("section");
+        const tooltipPosition = resolveTooltipPosition(node);
+        tooltip.className = "node-tooltip panel-cutout";
+        tooltip.style.left = tooltipPosition.left + "px";
+        tooltip.style.top = tooltipPosition.top + "px";
+        tooltip.style.transform = tooltipPosition.transform;
+
+        const body = document.createElement("div");
+        body.className = "node-tooltip-body";
+
+        const header = document.createElement("div");
+        header.className = "node-tooltip-header";
+
+        const heading = document.createElement("div");
+        heading.className = "node-tooltip-heading";
+        heading.appendChild(createElement("div", "eyebrow", resolveNodeType(node)));
+        heading.appendChild(createElement("h2", "node-tooltip-title", node.displayName));
+
+        const closeButton = createElement("button", "node-tooltip-close", "x");
+        closeButton.type = "button";
+        closeButton.setAttribute("aria-label", "Close node details");
+        closeButton.addEventListener("click", function (event) {
+            event.stopPropagation();
+            state.selectedNodeId = null;
+            renderBoard();
+        });
+
+        header.appendChild(heading);
+        header.appendChild(closeButton);
+
+        const rankRow = document.createElement("div");
+        rankRow.className = "node-tooltip-rank-row";
+        rankRow.appendChild(createElement("span", "node-tooltip-rank-value", previewRank + " / " + (node.rankCount || 0)));
+        rankRow.appendChild(createElement("span", "selected-rank-note", "Preview ranks are local only"));
+
+        const description = createElement("p", "node-tooltip-description", node.description || "No description exported for this node yet.");
+
+        const actions = document.createElement("div");
+        actions.className = "node-tooltip-actions";
+        actions.appendChild(createTooltipActionButton("Add Rank", "button-ornate", previewRank >= (node.rankCount || 0), function () {
+            setPreviewRank(node.id, Math.min(node.rankCount || 0, previewRank + 1));
+        }));
+        actions.appendChild(createTooltipActionButton("Remove Rank", "button-ghost", previewRank <= 0, function () {
+            setPreviewRank(node.id, Math.max(0, previewRank - 1));
+        }));
+        actions.appendChild(createTooltipActionButton("Clear", "button-ghost", previewRank <= 0, function () {
+            setPreviewRank(node.id, 0);
+        }));
+
+        body.appendChild(header);
+        body.appendChild(rankRow);
+        body.appendChild(description);
+        body.appendChild(actions);
+        body.appendChild(renderTooltipDetailBlock("Prerequisites", resolveConnectedNodes(node.id, true)));
+        body.appendChild(renderTooltipDetailBlock("Unlocks", resolveConnectedNodes(node.id, false)));
+
+        tooltip.appendChild(body);
+        return tooltip;
+    }
+
+    function createTooltipActionButton(label, className, disabled, onClick) {
+        const button = createElement("button", className, label);
+        button.type = "button";
+        button.disabled = !!disabled;
+        button.addEventListener("click", function (event) {
+            event.stopPropagation();
+            if (button.disabled) {
+                return;
+            }
+
+            onClick();
+        });
+        return button;
+    }
+
+    function renderTooltipDetailBlock(label, items) {
+        const block = document.createElement("div");
+        block.className = "node-tooltip-detail-block";
+        block.appendChild(createElement("div", "detail-label", label));
+
+        const list = document.createElement("div");
+        list.className = "detail-list";
+        fillDetailList(list, items);
+        block.appendChild(list);
+
+        return block;
+    }
+
+    function resolveTooltipPosition(node) {
+        const anchorX = toBoardPixel(node.normalizedPosition && node.normalizedPosition.x, "x");
+        const anchorY = toBoardPixel(node.normalizedPosition && node.normalizedPosition.y, "y");
+        const nodeX = Number(node.normalizedPosition && node.normalizedPosition.x || 0);
+        const nodeY = Number(node.normalizedPosition && node.normalizedPosition.y || 0);
+
+        const translateX = nodeX > 0.56 ? "calc(-100% - 92px)" : "92px";
+        let translateY = "-50%";
+        if (nodeY < 0.16) {
+            translateY = "0";
+        } else if (nodeY > 0.82) {
+            translateY = "-100%";
+        }
+
+        return {
+            left: Math.round(anchorX),
+            top: Math.round(anchorY),
+            transform: "translate(" + translateX + ", " + translateY + ")"
+        };
     }
 
     function renderSelectedPanel() {
@@ -504,6 +645,25 @@
     function scheduleConnectionRender() {
         window.cancelAnimationFrame(connectionFrame);
         connectionFrame = window.requestAnimationFrame(renderConnections);
+    }
+
+    function handleBoardResize() {
+        applyBoardFit();
+    }
+
+    function applyBoardFit() {
+        const board = document.getElementById("talentBoard");
+        const boardFit = document.getElementById("boardFit");
+        const boardScroll = document.querySelector(".board-scroll");
+        if (!board || !boardFit || !boardScroll) {
+            return;
+        }
+
+        const availableWidth = Math.max(1, boardScroll.clientWidth);
+        const scale = Math.min(1, availableWidth / BOARD_WIDTH);
+        board.style.transform = scale < 0.999 ? "scale(" + scale + ")" : "none";
+        boardFit.style.height = Math.round(BOARD_HEIGHT * scale) + "px";
+        scheduleConnectionRender();
     }
 
     function getSelectedNode() {
@@ -662,17 +822,26 @@
     }
 
     function toBoardPercent(value, axis) {
-        const numericValue = clamp(Number(value || 0), 0, 1);
-        if (axis === "x") {
-            return normalizeBoardPercent((((numericValue - 0.5) * BOARD_X_SPREAD) + 0.5), BOARD_SIDE_PADDING);
-        }
-
-        return normalizeBoardPercent(numericValue * BOARD_Y_SPREAD, BOARD_TOP_PADDING);
+        return (resolveBoardCoordinate(value, axis) * 100).toFixed(3) + "%";
     }
 
-    function normalizeBoardPercent(value, padding) {
+    function toBoardPixel(value, axis) {
+        const size = axis === "x" ? BOARD_WIDTH : BOARD_HEIGHT;
+        return resolveBoardCoordinate(value, axis) * size;
+    }
+
+    function resolveBoardCoordinate(value, axis) {
+        const numericValue = clamp(Number(value || 0), 0, 1);
+        if (axis === "x") {
+            return normalizeBoardCoordinate((((numericValue - 0.5) * BOARD_X_SPREAD) + 0.5), BOARD_SIDE_PADDING);
+        }
+
+        return normalizeBoardCoordinate(numericValue * BOARD_Y_SPREAD, BOARD_TOP_PADDING);
+    }
+
+    function normalizeBoardCoordinate(value, padding) {
         const contentSpan = 1 - (padding * 2);
-        return ((padding + (clamp(value, 0, 1) * contentSpan)) * 100).toFixed(3) + "%";
+        return padding + (clamp(value, 0, 1) * contentSpan);
     }
 
     function createElement(tagName, className, text) {
