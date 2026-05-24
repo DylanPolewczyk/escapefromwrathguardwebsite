@@ -1,6 +1,12 @@
 (function () {
     const DATA_PATH = "data/talent-trees.json";
     const STORAGE_KEY = "wrathguardTalentPreviewRanks";
+    const BOARD_WIDTH = 1760;
+    const BOARD_HEIGHT = 1820;
+    const BOARD_SIDE_PADDING = 0.06;
+    const BOARD_TOP_PADDING = 0.065;
+    const BOARD_X_SPREAD = 1.18;
+    const BOARD_Y_SPREAD = 1.12;
 
     const state = {
         data: null,
@@ -256,6 +262,8 @@
 
         board.replaceChildren();
         board.style.setProperty("--accent-color", state.tree.accentColor || "rgba(217, 168, 79, 0.24)");
+        board.style.setProperty("--board-width", BOARD_WIDTH + "px");
+        board.style.setProperty("--board-height", BOARD_HEIGHT + "px");
 
         const connectionLayer = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         connectionLayer.classList.add("connection-layer");
@@ -263,8 +271,8 @@
 
         (state.tree.branchLabels || []).forEach(function (label) {
             const labelElement = createElement("div", "branch-label", label.text || "Branch");
-            labelElement.style.left = toPercent(label.normalizedPosition && label.normalizedPosition.x);
-            labelElement.style.top = toPercent(label.normalizedPosition && label.normalizedPosition.y);
+            labelElement.style.left = toBoardPercent(label.normalizedPosition && label.normalizedPosition.x, "x");
+            labelElement.style.top = toBoardPercent(label.normalizedPosition && label.normalizedPosition.y, "y");
             labelElement.style.color = label.color || "var(--gold)";
             board.appendChild(labelElement);
         });
@@ -282,8 +290,8 @@
         button.type = "button";
         button.className = "talent-node";
         button.dataset.nodeId = node.id || "";
-        button.style.left = toPercent(node.normalizedPosition && node.normalizedPosition.x);
-        button.style.top = toPercent(node.normalizedPosition && node.normalizedPosition.y);
+        button.style.left = toBoardPercent(node.normalizedPosition && node.normalizedPosition.x, "x");
+        button.style.top = toBoardPercent(node.normalizedPosition && node.normalizedPosition.y, "y");
         if (node.tint) {
             button.style.borderColor = mixColor(node.tint, "rgba(255,255,255,0.12)");
         }
@@ -653,9 +661,18 @@
         });
     }
 
-    function toPercent(value) {
-        const numericValue = Number(value || 0);
-        return (numericValue * 100).toFixed(3) + "%";
+    function toBoardPercent(value, axis) {
+        const numericValue = clamp(Number(value || 0), 0, 1);
+        if (axis === "x") {
+            return normalizeBoardPercent((((numericValue - 0.5) * BOARD_X_SPREAD) + 0.5), BOARD_SIDE_PADDING);
+        }
+
+        return normalizeBoardPercent(numericValue * BOARD_Y_SPREAD, BOARD_TOP_PADDING);
+    }
+
+    function normalizeBoardPercent(value, padding) {
+        const contentSpan = 1 - (padding * 2);
+        return ((padding + (clamp(value, 0, 1) * contentSpan)) * 100).toFixed(3) + "%";
     }
 
     function createElement(tagName, className, text) {
@@ -698,6 +715,10 @@
 
     function mixColor(primaryColor, fallbackColor) {
         return primaryColor || fallbackColor || "rgba(255,255,255,0.12)";
+    }
+
+    function clamp(value, min, max) {
+        return Math.min(max, Math.max(min, value));
     }
 
     function cssEscape(value) {

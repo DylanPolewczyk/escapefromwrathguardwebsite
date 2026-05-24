@@ -321,6 +321,11 @@ button {
     position: relative;
 }
 
+.board-panel {
+    display: grid;
+    gap: 1rem;
+}
+
 .class-chip {
     border-color: rgba(255, 255, 255, 0.08);
     background: rgba(255, 255, 255, 0.04);
@@ -347,8 +352,8 @@ button {
 
 .talent-board {
     position: relative;
-    width: 1120px;
-    height: 1320px;
+    width: var(--board-width, 1760px);
+    height: var(--board-height, 1820px);
     border: 1px solid rgba(255, 255, 255, 0.05);
     background:
         radial-gradient(circle at top, rgba(255, 219, 155, 0.05), transparent 24%),
@@ -356,7 +361,7 @@ button {
         linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px),
         linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
         linear-gradient(180deg, rgba(23, 17, 12, 0.98), rgba(7, 5, 4, 0.98));
-    background-size: auto, auto, 48px 48px, 48px 48px, auto;
+    background-size: auto, auto, 52px 52px, 52px 52px, auto;
     border-radius: 20px;
 }
 
@@ -635,4 +640,5 @@ button {
     .site-hero h1 {
         font-size: clamp(2.6rem, 16vw, 4.2rem);
     }
+
 }
