@@ -838,10 +838,15 @@
     }
 
     function renderLevelControls() {
+        const classPreviewTitle = document.getElementById("classPreviewTitle");
         const playerLevelInput = document.getElementById("playerLevelInput");
         const availableTalentPoints = document.getElementById("availableTalentPoints");
         const levelPointHint = document.getElementById("levelPointHint");
         const previewLevel = getPreviewLevel();
+
+        if (classPreviewTitle) {
+            classPreviewTitle.textContent = (state.tree ? (state.tree.displayName || state.tree.classId) : "Class") + " Preview";
+        }
 
         if (playerLevelInput) {
             playerLevelInput.value = String(previewLevel);
@@ -926,25 +931,29 @@
             return {
                 unlocked: true,
                 tier: 1,
+                branchIndex: 0,
                 reason: ""
             };
         }
 
         const tier = getNodeTierForTree(node, state.tree);
+        const branchIndex = resolveNodeBranchIndex(node, state.tree);
         if (tier <= 1) {
             return {
                 unlocked: true,
                 tier: tier,
+                branchIndex: branchIndex,
                 reason: ""
             };
         }
 
         const previousTier = tier - 1;
-        const previousAllocation = getTierAllocation(state.tree, previousTier);
+        const previousAllocation = getTierAllocation(state.tree, previousTier, branchIndex);
         if (!previousAllocation.total) {
             return {
                 unlocked: true,
                 tier: tier,
+                branchIndex: branchIndex,
                 reason: ""
             };
         }
@@ -954,6 +963,7 @@
             return {
                 unlocked: true,
                 tier: tier,
+                branchIndex: branchIndex,
                 reason: ""
             };
         }
@@ -961,13 +971,17 @@
         return {
             unlocked: false,
             tier: tier,
-            reason: getTierLabel(tier, state.tree) + " requires 50% of " + getTierLabel(previousTier, state.tree) + " allocated (" + previousAllocation.spent + "/" + previousAllocation.total + ")."
+            branchIndex: branchIndex,
+            reason: getTierLabel(tier, state.tree) + " requires 50% of " + getTierLabel(previousTier, state.tree) + " in " + getBranchName(state.tree, branchIndex) + " allocated (" + previousAllocation.spent + "/" + previousAllocation.total + ")."
         };
     }
 
-    function getTierAllocation(tree, tier) {
+    function getTierAllocation(tree, tier, branchIndex) {
         return getVisibleNodes(tree).reduce(function (summary, node) {
             if (getNodeTierForTree(node, tree) !== tier) {
+                return summary;
+            }
+            if (branchIndex !== undefined && resolveNodeBranchIndex(node, tree) !== branchIndex) {
                 return summary;
             }
 
@@ -978,6 +992,50 @@
             spent: 0,
             total: 0
         });
+    }
+
+    function resolveNodeBranchIndex(node, tree) {
+        const branches = getSortedBranchLabels(tree);
+        if (!branches.length) {
+            return 0;
+        }
+
+        const nodeTint = normalizeColorToken(node && node.tint);
+        if (nodeTint) {
+            for (let index = 0; index < branches.length; index += 1) {
+                if (normalizeColorToken(branches[index].color) === nodeTint) {
+                    return index;
+                }
+            }
+        }
+
+        const nodeX = Number(node && node.normalizedPosition ? node.normalizedPosition.x : 0);
+        let closestIndex = 0;
+        let closestDistance = Number.POSITIVE_INFINITY;
+        branches.forEach(function (branch, index) {
+            const branchX = Number(branch && branch.normalizedPosition ? branch.normalizedPosition.x : 0);
+            const distance = Math.abs(branchX - nodeX);
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closestIndex = index;
+            }
+        });
+
+        return closestIndex;
+    }
+
+    function getSortedBranchLabels(tree) {
+        return (tree && Array.isArray(tree.branchLabels) ? tree.branchLabels.slice() : []).sort(function (left, right) {
+            const leftX = Number(left && left.normalizedPosition ? left.normalizedPosition.x : 0);
+            const rightX = Number(right && right.normalizedPosition ? right.normalizedPosition.x : 0);
+            return leftX - rightX;
+        });
+    }
+
+    function getBranchName(tree, branchIndex) {
+        const branches = getSortedBranchLabels(tree);
+        const branch = branches[branchIndex];
+        return branch && branch.text ? branch.text : "Branch " + (branchIndex + 1);
     }
 
     function getNodeTierForTree(node, tree) {
@@ -1227,6 +1285,10 @@
     function sanitizePreviewLevel(value) {
         const numericValue = Math.floor(Number(value || 1));
         return Math.max(1, Number.isFinite(numericValue) ? numericValue : 1);
+    }
+
+    function normalizeColorToken(value) {
+        return String(value || "").trim().toUpperCase();
     }
 
     function cssEscape(value) {

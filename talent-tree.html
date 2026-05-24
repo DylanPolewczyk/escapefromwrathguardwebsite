@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=20260524e">
+    <link rel="stylesheet" href="css/style.css?v=20260524f">
 </head>
 <body data-page="tree">
     <div class="viewer-shell">
@@ -17,17 +17,6 @@
             <div class="viewer-branding">
                 <div class="eyebrow">Escape From Wrathguard</div>
                 <div class="viewer-brand-title">Interactive Talent Viewer</div>
-            </div>
-            <div class="viewer-controls">
-                <div class="viewer-level-panel">
-                    <label class="detail-label viewer-level-label" for="playerLevelInput">Player Level</label>
-                    <div class="viewer-level-row">
-                        <input class="viewer-level-input" id="playerLevelInput" type="number" min="1" step="1" inputmode="numeric" value="1">
-                        <span class="stat-pill viewer-points-pill" id="availableTalentPoints">0 Available</span>
-                    </div>
-                    <div class="viewer-level-note" id="levelPointHint">1 point every 2 levels</div>
-                </div>
-                <button class="button-ghost" id="resetClassPreviewButton" type="button">Reset Class Preview</button>
             </div>
         </header>
 
@@ -38,6 +27,18 @@
                 <section class="panel-cutout class-rail-panel viewer-class-panel">
                     <div class="eyebrow">Switch Class</div>
                     <div class="class-rail" id="classRail"></div>
+                    <div class="viewer-controls viewer-controls-panel">
+                        <div class="detail-label" id="classPreviewTitle">Class Preview</div>
+                        <div class="viewer-level-panel">
+                            <label class="detail-label viewer-level-label" for="playerLevelInput">Player Level</label>
+                            <div class="viewer-level-row">
+                                <input class="viewer-level-input" id="playerLevelInput" type="number" min="1" step="1" inputmode="numeric" value="1">
+                                <span class="stat-pill viewer-points-pill" id="availableTalentPoints">0 Available</span>
+                            </div>
+                            <div class="viewer-level-note" id="levelPointHint">1 point every 2 levels</div>
+                        </div>
+                        <button class="button-ghost" id="resetClassPreviewButton" type="button">Reset Class Preview</button>
+                    </div>
                 </section>
 
                 <section class="tree-hero panel-cutout" id="treeHero">
@@ -58,6 +59,6 @@
         </div>
     </div>
 
-    <script src="js/app.js?v=20260524d" defer></script>
+    <script src="js/app.js?v=20260524e" defer></script>
 </body>
 </html>

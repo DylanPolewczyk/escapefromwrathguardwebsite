@@ -464,23 +464,24 @@ button {
 
 .viewer-topbar {
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: auto 1fr;
     gap: 1rem;
     align-items: center;
 }
 
 .viewer-controls {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: end;
+    display: grid;
     gap: 0.75rem;
+}
+
+.viewer-controls-panel {
+    margin-top: 0.2rem;
 }
 
 .viewer-level-panel {
     display: grid;
     gap: 0.35rem;
-    min-width: 240px;
+    min-width: 0;
     padding: 0.8rem 0.95rem;
     border: 1px solid rgba(255, 255, 255, 0.08);
     background: rgba(17, 13, 9, 0.64);
@@ -494,6 +495,7 @@ button {
 .viewer-level-row {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 0.65rem;
 }
 
@@ -515,6 +517,10 @@ button {
 
 .viewer-points-pill {
     white-space: nowrap;
+}
+
+.viewer-controls-panel .button-ghost {
+    width: 100%;
 }
 
 .viewer-level-note,
@@ -968,7 +974,6 @@ button {
 
     .viewer-controls {
         width: 100%;
-        justify-content: stretch;
     }
 
     .viewer-level-panel {
