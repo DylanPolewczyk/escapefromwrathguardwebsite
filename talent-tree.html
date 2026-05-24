@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Escape From Wrathguard | Talent Tree Viewer</title>
+    <meta name="description" content="Inspect individual Escape From Wrathguard talent trees in an interactive browser viewer.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="tree">
+    <div class="viewer-shell">
+        <header class="viewer-topbar panel-cutout reveal-up">
+            <a class="ghost-link" href="index.html">All Classes</a>
+            <div class="viewer-branding">
+                <div class="eyebrow">Escape From Wrathguard</div>
+                <div class="viewer-brand-title">Interactive Talent Viewer</div>
+            </div>
+            <button class="button-ghost" id="resetClassPreviewButton" type="button">Reset Class Preview</button>
+        </header>
+
+        <div class="state-message hidden" data-state-message></div>
+
+        <div class="viewer-layout">
+            <aside class="viewer-sidebar reveal-up">
+                <section class="panel-cutout class-rail-panel">
+                    <div class="eyebrow">Switch Class</div>
+                    <div class="class-rail" id="classRail"></div>
+                </section>
+
+                <section class="panel-cutout selected-panel" id="selectedPanel">
+                    <div class="eyebrow">Node Details</div>
+                    <h2 id="selectedNodeTitle">Select a node</h2>
+                    <p class="selected-node-type" id="selectedNodeType">Passive Talent</p>
+                    <div class="selected-rank-row">
+                        <span id="selectedNodeRankValue">0 / 0</span>
+                        <span class="selected-rank-note">Preview ranks are local only</span>
+                    </div>
+                    <p class="selected-description" id="selectedNodeDescription">Choose a node to inspect its description and preview local rank allocation.</p>
+
+                    <div class="panel-actions">
+                        <button class="button-ornate" id="addRankButton" type="button">Add Rank</button>
+                        <button class="button-ghost" id="removeRankButton" type="button">Remove Rank</button>
+                        <button class="button-ghost" id="clearRankButton" type="button">Clear</button>
+                    </div>
+
+                    <div class="detail-list-block">
+                        <div class="detail-label">Prerequisites</div>
+                        <div class="detail-list" id="selectedPrerequisites"></div>
+                    </div>
+
+                    <div class="detail-list-block">
+                        <div class="detail-label">Unlocks</div>
+                        <div class="detail-list" id="selectedUnlocks"></div>
+                    </div>
+                </section>
+            </aside>
+
+            <main class="viewer-main reveal-up">
+                <section class="tree-hero panel-cutout" id="treeHero">
+                    <div class="eyebrow" id="treeEyebrow">Talent Tree</div>
+                    <h1 id="treeTitle">Loading...</h1>
+                    <p class="tree-description" id="treeDescription">Exported class summary will appear here.</p>
+                    <div class="tree-stats" id="treeStats"></div>
+                </section>
+
+                <section class="panel-cutout board-panel">
+                    <div class="board-scroll">
+                        <div class="talent-board" id="talentBoard"></div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <script src="js/app.js" defer></script>
+</body>
+</html>

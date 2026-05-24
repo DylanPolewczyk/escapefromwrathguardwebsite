@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Escape From Wrathguard | Talent Atlas</title>
+    <meta name="description" content="Preview every Escape From Wrathguard talent tree in a dedicated interactive atlas.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="index">
+    <div class="page-shell">
+        <header class="site-hero panel-cutout reveal-up">
+            <div class="eyebrow">Escape From Wrathguard</div>
+            <h1>Talent Atlas</h1>
+            <p class="hero-copy">A live web mirror of the in-game talent trees. Browse every class, inspect every node, and open any tree in a dedicated viewer built from exported Unity data.</p>
+            <div class="hero-actions">
+                <a class="button-ornate" href="talent-tree.html">Open Viewer</a>
+                <div class="hero-note">Generated from Unity export data in <span class="mono">data/talent-trees.json</span>.</div>
+            </div>
+        </header>
+
+        <section class="section-block reveal-up">
+            <div class="section-heading">
+                <div>
+                    <div class="eyebrow">Class Roster</div>
+                    <h2>Choose A Discipline</h2>
+                </div>
+                <p class="section-copy">Each card opens a full tree board with node details, prerequisite links, and local preview rank tracking.</p>
+            </div>
+
+            <div class="state-message hidden" data-state-message></div>
+            <div class="class-grid" id="classGrid"></div>
+        </section>
+    </div>
+
+    <script src="js/app.js" defer></script>
+</body>
+</html>
