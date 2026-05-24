@@ -7,12 +7,14 @@
     const BOARD_TOP_PADDING = 0.065;
     const BOARD_X_SPREAD = 1.18;
     const BOARD_Y_SPREAD = 1.12;
+    const TOOLTIP_HIDE_DELAY_MS = 120;
 
     const state = {
         data: null,
         tree: null,
         selectedNodeId: null,
-        previewRanks: loadPreviewRanks()
+        previewRanks: loadPreviewRanks(),
+        tooltipHideTimer: 0
     };
 
     document.addEventListener("DOMContentLoaded", initialize);
@@ -170,8 +172,7 @@
             return;
         }
 
-        state.selectedNodeId = null;
-        renderBoard();
+        clearTooltip();
     }
 
     function handleTooltipEscape(event) {
@@ -179,8 +180,61 @@
             return;
         }
 
+        clearTooltip();
+    }
+
+    function showTooltipForNode(nodeId) {
+        if (!nodeId) {
+            return;
+        }
+
+        cancelTooltipHide();
+        if (state.selectedNodeId === nodeId) {
+            return;
+        }
+
+        state.selectedNodeId = nodeId;
+        renderBoard();
+    }
+
+    function clearTooltip() {
+        cancelTooltipHide();
+        if (!state.selectedNodeId) {
+            return;
+        }
+
         state.selectedNodeId = null;
         renderBoard();
+    }
+
+    function scheduleTooltipHide() {
+        cancelTooltipHide();
+        state.tooltipHideTimer = window.setTimeout(function () {
+            state.tooltipHideTimer = 0;
+            if (!state.selectedNodeId) {
+                return;
+            }
+
+            state.selectedNodeId = null;
+            renderBoard();
+        }, TOOLTIP_HIDE_DELAY_MS);
+    }
+
+    function cancelTooltipHide() {
+        if (!state.tooltipHideTimer) {
+            return;
+        }
+
+        window.clearTimeout(state.tooltipHideTimer);
+        state.tooltipHideTimer = 0;
+    }
+
+    function isTooltipTarget(target) {
+        return !!(target && target.closest && target.closest(".node-tooltip"));
+    }
+
+    function isTalentNodeTarget(target) {
+        return !!(target && target.closest && target.closest(".talent-node"));
     }
 
     function getRequestedClassId() {
@@ -194,6 +248,7 @@
             return;
         }
 
+        cancelTooltipHide();
         state.tree = tree;
         ensurePreviewClassBucket(tree.classId);
 
@@ -380,10 +435,31 @@
         button.appendChild(header);
         button.appendChild(title);
         button.appendChild(pips);
+        button.addEventListener("mouseenter", function () {
+            showTooltipForNode(node.id);
+        });
+        button.addEventListener("mouseleave", function (event) {
+            if (isTooltipTarget(event.relatedTarget)) {
+                cancelTooltipHide();
+                return;
+            }
+
+            scheduleTooltipHide();
+        });
+        button.addEventListener("focus", function () {
+            showTooltipForNode(node.id);
+        });
+        button.addEventListener("blur", function (event) {
+            if (isTooltipTarget(event.relatedTarget)) {
+                cancelTooltipHide();
+                return;
+            }
+
+            scheduleTooltipHide();
+        });
         button.addEventListener("click", function (event) {
             event.stopPropagation();
-            state.selectedNodeId = state.selectedNodeId === node.id ? null : node.id;
-            renderBoard();
+            showTooltipForNode(node.id);
         });
 
         return button;
@@ -397,6 +473,24 @@
         tooltip.style.left = tooltipPosition.left + "px";
         tooltip.style.top = tooltipPosition.top + "px";
         tooltip.style.transform = tooltipPosition.transform;
+        tooltip.addEventListener("mouseenter", cancelTooltipHide);
+        tooltip.addEventListener("mouseleave", function (event) {
+            if (isTalentNodeTarget(event.relatedTarget)) {
+                cancelTooltipHide();
+                return;
+            }
+
+            scheduleTooltipHide();
+        });
+        tooltip.addEventListener("focusin", cancelTooltipHide);
+        tooltip.addEventListener("focusout", function (event) {
+            if (isTooltipTarget(event.relatedTarget) || isTalentNodeTarget(event.relatedTarget)) {
+                cancelTooltipHide();
+                return;
+            }
+
+            scheduleTooltipHide();
+        });
 
         const body = document.createElement("div");
         body.className = "node-tooltip-body";
@@ -414,8 +508,7 @@
         closeButton.setAttribute("aria-label", "Close node details");
         closeButton.addEventListener("click", function (event) {
             event.stopPropagation();
-            state.selectedNodeId = null;
-            renderBoard();
+            clearTooltip();
         });
 
         header.appendChild(heading);
