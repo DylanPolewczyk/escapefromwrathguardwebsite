@@ -64,7 +64,7 @@ button {
 }
 
 .viewer-shell {
-    width: calc(100% - 1rem);
+    width: min(1920px, calc(100% - 1rem));
     margin: 0 auto;
     padding: 1rem 0 2.5rem;
 }
@@ -305,14 +305,20 @@ button {
 }
 
 .viewer-layout {
-    display: block;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
     margin-top: 1rem;
 }
 
 .viewer-main {
     display: grid;
+    width: 100%;
+    grid-template-columns: minmax(280px, 420px) minmax(0, 1fr);
+    grid-template-areas:
+        "class hero"
+        "board board";
+    align-items: stretch;
     gap: 1rem;
-    align-content: start;
 }
 
 .class-rail-panel,
@@ -323,6 +329,8 @@ button {
 
 .board-panel {
     display: grid;
+    grid-area: board;
+    width: 100%;
     gap: 1rem;
     overflow: visible;
 }
@@ -330,6 +338,13 @@ button {
 .viewer-class-panel {
     display: grid;
     gap: 0.8rem;
+    grid-area: class;
+    width: 100%;
+}
+
+.tree-hero {
+    grid-area: hero;
+    width: 100%;
 }
 
 .class-chip {
@@ -352,6 +367,7 @@ button {
 }
 
 .board-scroll {
+    width: 100%;
     overflow-x: hidden;
     overflow-y: auto;
     padding-bottom: 0.25rem;
@@ -681,7 +697,15 @@ button {
     }
 }
 
-@media (max-width: 1080px) {
+@media (max-width: 820px) {
+    .viewer-main {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "class"
+            "hero"
+            "board";
+    }
+
     .panel-actions {
         grid-template-columns: 1fr;
     }
@@ -719,6 +743,14 @@ button {
     .viewer-shell {
         width: calc(100% - 0.5rem);
         padding-top: 0.75rem;
+    }
+
+    .viewer-main {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "class"
+            "hero"
+            "board";
     }
 
     .node-tooltip {
