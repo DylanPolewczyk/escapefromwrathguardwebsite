@@ -1,12 +1,14 @@
 (function () {
     const DATA_PATH = "data/talent-trees.json";
     const STORAGE_KEY = "wrathguardTalentPreviewRanks";
+    const LEVEL_STORAGE_KEY = "wrathguardTalentPreviewLevel";
     const BOARD_WIDTH = 1760;
     const BOARD_HEIGHT = 1820;
     const BOARD_SIDE_PADDING = 0.06;
     const BOARD_TOP_PADDING = 0.065;
     const BOARD_X_SPREAD = 1.30;
     const BOARD_Y_SPREAD = 1.12;
+    const TIER_UNLOCK_RATIO = 0.5;
     const TOOLTIP_HIDE_DELAY_MS = 120;
 
     const state = {
@@ -14,6 +16,7 @@
         tree: null,
         selectedNodeId: null,
         previewRanks: loadPreviewRanks(),
+        previewLevel: loadPreviewLevel(),
         tooltipHideTimer: 0
     };
 
@@ -107,6 +110,7 @@
         const addRankButton = document.getElementById("addRankButton");
         const removeRankButton = document.getElementById("removeRankButton");
         const clearRankButton = document.getElementById("clearRankButton");
+        const playerLevelInput = document.getElementById("playerLevelInput");
         const resetClassPreviewButton = document.getElementById("resetClassPreviewButton");
 
         if (addRankButton) {
@@ -152,9 +156,17 @@
 
                 state.previewRanks[state.tree.classId] = {};
                 persistPreviewRanks();
+                renderLevelControls();
                 renderTreeStats();
                 renderBoard();
             });
+        }
+
+        if (playerLevelInput) {
+            playerLevelInput.addEventListener("change", function () {
+                setPreviewLevel(playerLevelInput.value);
+            });
+            playerLevelInput.addEventListener("blur", renderLevelControls);
         }
     }
 
@@ -262,6 +274,7 @@
 
         renderClassRail();
         renderHero();
+        renderLevelControls();
         renderTreeStats();
         renderBoard();
     }
@@ -322,11 +335,13 @@
         }
 
         treeStats.replaceChildren();
+        const spentPoints = getAllocatedPoints(state.tree.classId);
         const stats = [
             countVisibleNodes(state.tree) + " Nodes",
             countActiveNodes(state.tree) + " Active",
             getBranchCount(state.tree) + " Branches",
-            getAllocatedPoints(state.tree.classId) + " Preview Points"
+            spentPoints + " Spent",
+            getAvailableTalentPoints() + " Available"
         ];
 
         stats.forEach(function (value) {
@@ -467,6 +482,7 @@
 
     function renderNodeTooltip(node) {
         const previewRank = getPreviewRank(node.id);
+        const addRankState = resolveAddRankState(node);
         const tooltip = document.createElement("section");
         const tooltipPosition = resolveTooltipPosition(node);
         tooltip.className = "node-tooltip panel-cutout";
@@ -517,13 +533,13 @@
         const rankRow = document.createElement("div");
         rankRow.className = "node-tooltip-rank-row";
         rankRow.appendChild(createElement("span", "node-tooltip-rank-value", previewRank + " / " + (node.rankCount || 0)));
-        rankRow.appendChild(createElement("span", "selected-rank-note", "Preview ranks are local only"));
+        rankRow.appendChild(createElement("span", "selected-rank-note", getAvailableTalentPoints() + " points available"));
 
         const description = createElement("p", "node-tooltip-description", node.description || "No description exported for this node yet.");
 
         const actions = document.createElement("div");
         actions.className = "node-tooltip-actions";
-        actions.appendChild(createTooltipActionButton("Add Rank", "button-ornate", previewRank >= (node.rankCount || 0), function () {
+        actions.appendChild(createTooltipActionButton("Add Rank", "button-ornate", addRankState.disabled, function () {
             setPreviewRank(node.id, Math.min(node.rankCount || 0, previewRank + 1));
         }));
         actions.appendChild(createTooltipActionButton("Remove Rank", "button-ghost", previewRank <= 0, function () {
@@ -537,6 +553,9 @@
         body.appendChild(rankRow);
         body.appendChild(description);
         body.appendChild(actions);
+        if (addRankState.reason) {
+            body.appendChild(createElement("p", "node-tooltip-hint", addRankState.reason));
+        }
         body.appendChild(renderTooltipDetailBlock("Prerequisites", resolveConnectedNodes(node.id, true)));
         body.appendChild(renderTooltipDetailBlock("Unlocks", resolveConnectedNodes(node.id, false)));
 
@@ -642,7 +661,7 @@
         fillDetailList(unlocks, resolveConnectedNodes(node.id, false));
 
         if (addRankButton) {
-            addRankButton.disabled = previewRank >= (node.rankCount || 0);
+            addRankButton.disabled = resolveAddRankState(node).disabled;
         }
         if (removeRankButton) {
             removeRankButton.disabled = previewRank <= 0;
@@ -818,6 +837,190 @@
         return Array.isArray(tree.branchLabels) ? tree.branchLabels.length : 0;
     }
 
+    function renderLevelControls() {
+        const playerLevelInput = document.getElementById("playerLevelInput");
+        const availableTalentPoints = document.getElementById("availableTalentPoints");
+        const levelPointHint = document.getElementById("levelPointHint");
+        const previewLevel = getPreviewLevel();
+
+        if (playerLevelInput) {
+            playerLevelInput.value = String(previewLevel);
+        }
+
+        if (availableTalentPoints) {
+            availableTalentPoints.textContent = getAvailableTalentPoints() + " Available";
+        }
+
+        if (levelPointHint) {
+            levelPointHint.textContent = "1 point every 2 levels • " + getEarnedTalentPoints(previewLevel) + " earned";
+        }
+    }
+
+    function setPreviewLevel(value) {
+        const nextLevel = sanitizePreviewLevel(value);
+        state.previewLevel = nextLevel;
+        persistPreviewLevel();
+        renderLevelControls();
+        renderTreeStats();
+        renderBoard();
+        renderSelectedPanel();
+    }
+
+    function getPreviewLevel() {
+        return sanitizePreviewLevel(state.previewLevel);
+    }
+
+    function getEarnedTalentPoints(level) {
+        return Math.floor(sanitizePreviewLevel(level) / 2);
+    }
+
+    function getAvailableTalentPoints() {
+        const earnedPoints = getEarnedTalentPoints(getPreviewLevel());
+        if (!state.tree) {
+            return earnedPoints;
+        }
+
+        return Math.max(0, earnedPoints - getAllocatedPoints(state.tree.classId));
+    }
+
+    function resolveAddRankState(node) {
+        if (!node || node.placeholder || !node.displayName) {
+            return {
+                disabled: true,
+                reason: ""
+            };
+        }
+
+        const previewRank = getPreviewRank(node.id);
+        const maxRank = Math.max(1, Number(node.rankCount || 1));
+        if (previewRank >= maxRank) {
+            return {
+                disabled: true,
+                reason: ""
+            };
+        }
+
+        if (getAvailableTalentPoints() <= 0) {
+            return {
+                disabled: true,
+                reason: "No talent points are available at the current level."
+            };
+        }
+
+        const tierUnlockState = resolveTierUnlockState(node);
+        if (!tierUnlockState.unlocked) {
+            return {
+                disabled: true,
+                reason: tierUnlockState.reason
+            };
+        }
+
+        return {
+            disabled: false,
+            reason: ""
+        };
+    }
+
+    function resolveTierUnlockState(node) {
+        if (!state.tree || !node) {
+            return {
+                unlocked: true,
+                tier: 1,
+                reason: ""
+            };
+        }
+
+        const tier = getNodeTierForTree(node, state.tree);
+        if (tier <= 1) {
+            return {
+                unlocked: true,
+                tier: tier,
+                reason: ""
+            };
+        }
+
+        const previousTier = tier - 1;
+        const previousAllocation = getTierAllocation(state.tree, previousTier);
+        if (!previousAllocation.total) {
+            return {
+                unlocked: true,
+                tier: tier,
+                reason: ""
+            };
+        }
+
+        const allocatedRatio = previousAllocation.spent / previousAllocation.total;
+        if (allocatedRatio >= TIER_UNLOCK_RATIO) {
+            return {
+                unlocked: true,
+                tier: tier,
+                reason: ""
+            };
+        }
+
+        return {
+            unlocked: false,
+            tier: tier,
+            reason: getTierLabel(tier, state.tree) + " requires 50% of " + getTierLabel(previousTier, state.tree) + " allocated (" + previousAllocation.spent + "/" + previousAllocation.total + ")."
+        };
+    }
+
+    function getTierAllocation(tree, tier) {
+        return getVisibleNodes(tree).reduce(function (summary, node) {
+            if (getNodeTierForTree(node, tree) !== tier) {
+                return summary;
+            }
+
+            summary.total += Math.max(1, Number(node.rankCount || 1));
+            summary.spent += getPreviewRank(node.id);
+            return summary;
+        }, {
+            spent: 0,
+            total: 0
+        });
+    }
+
+    function getNodeTierForTree(node, tree) {
+        if (!tree || !node || !node.normalizedPosition) {
+            return 1;
+        }
+
+        const rows = getTierRows(tree);
+        const nodeY = Number(node.normalizedPosition.y || 0);
+        for (let index = 0; index < rows.length; index += 1) {
+            if (Math.abs(rows[index] - nodeY) < 0.015) {
+                return index + 1;
+            }
+        }
+
+        return rows.length || 1;
+    }
+
+    function getTierRows(tree) {
+        const rows = [];
+        getVisibleNodes(tree).forEach(function (node) {
+            const nodeY = Number(node && node.normalizedPosition ? node.normalizedPosition.y : 0);
+            if (!rows.some(function (row) {
+                return Math.abs(row - nodeY) < 0.015;
+            })) {
+                rows.push(nodeY);
+            }
+        });
+
+        return rows.sort(function (left, right) {
+            return right - left;
+        });
+    }
+
+    function getTierLabel(tier, tree) {
+        const totalTiers = getTierRows(tree).length;
+        if (totalTiers >= 4 && tier === totalTiers) {
+            return "Capstone";
+        }
+
+        return "Tier " + tier;
+    }
+
     function findTree(classId) {
         if (!state.data || !Array.isArray(state.data.classes)) {
             return null;
@@ -844,20 +1047,40 @@
 
     function setPreviewRank(nodeId, value) {
         if (!state.tree || !nodeId) {
-            return;
+            return false;
+        }
+
+        const node = getNodeById(nodeId);
+        if (!node || node.placeholder || !node.displayName) {
+            return false;
+        }
+
+        const currentRank = getPreviewRank(nodeId);
+        const maxRank = Math.max(1, Number(node.rankCount || 1));
+        const nextRank = clamp(Math.floor(Number(value || 0)), 0, maxRank);
+        if (nextRank === currentRank) {
+            return true;
+        }
+
+        if (nextRank > currentRank) {
+            if (nextRank !== currentRank + 1 || resolveAddRankState(node).disabled) {
+                return false;
+            }
         }
 
         ensurePreviewClassBucket(state.tree.classId);
-        if (value <= 0) {
+        if (nextRank <= 0) {
             delete state.previewRanks[state.tree.classId][nodeId];
         } else {
-            state.previewRanks[state.tree.classId][nodeId] = value;
+            state.previewRanks[state.tree.classId][nodeId] = nextRank;
         }
 
         persistPreviewRanks();
+        renderLevelControls();
         renderTreeStats();
         renderBoard();
         renderSelectedPanel();
+        return true;
     }
 
     function ensurePreviewClassBucket(classId) {
@@ -883,11 +1106,29 @@
         }
     }
 
+    function loadPreviewLevel() {
+        try {
+            const raw = window.localStorage.getItem(LEVEL_STORAGE_KEY);
+            return sanitizePreviewLevel(raw ? JSON.parse(raw) : 1);
+        } catch (error) {
+            console.warn("Unable to load preview level", error);
+            return 1;
+        }
+    }
+
     function persistPreviewRanks() {
         try {
             window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state.previewRanks));
         } catch (error) {
             console.warn("Unable to persist preview ranks", error);
+        }
+    }
+
+    function persistPreviewLevel() {
+        try {
+            window.localStorage.setItem(LEVEL_STORAGE_KEY, JSON.stringify(getPreviewLevel()));
+        } catch (error) {
+            console.warn("Unable to persist preview level", error);
         }
     }
 
@@ -981,6 +1222,11 @@
 
     function clamp(value, min, max) {
         return Math.min(max, Math.max(min, value));
+    }
+
+    function sanitizePreviewLevel(value) {
+        const numericValue = Math.floor(Number(value || 1));
+        return Math.max(1, Number.isFinite(numericValue) ? numericValue : 1);
     }
 
     function cssEscape(value) {

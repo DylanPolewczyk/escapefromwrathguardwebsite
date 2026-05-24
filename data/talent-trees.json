@@ -554,9 +554,9 @@
         },
         {
             "classId": "Assassin",
-            "displayName": "Assassin",
-            "title": "Assassin Talents",
-            "description": "Assassin talent masteries organized into three knight-style branches.",
+            "displayName": "Rogue",
+            "title": "Rogue Talents",
+            "description": "Rogue talent masteries organized into three knight-style branches.",
             "accentColor": "#E64C70FF",
             "branchLabels": [
                 {
