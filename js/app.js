@@ -778,16 +778,18 @@
         }
 
         state.tree.connections.forEach(function (connection) {
+            const fromNode = getNodeById(connection.fromId);
+            const toNode = getNodeById(connection.toId);
             const fromElement = board.querySelector('[data-node-id="' + cssEscape(connection.fromId) + '"]');
             const toElement = board.querySelector('[data-node-id="' + cssEscape(connection.toId) + '"]');
-            if (!fromElement || !toElement) {
+            if (!fromElement || !toElement || !fromNode || !toNode) {
                 return;
             }
 
-            const x1 = fromElement.offsetLeft + (fromElement.offsetWidth / 2);
-            const y1 = fromElement.offsetTop + (fromElement.offsetHeight / 2);
-            const x2 = toElement.offsetLeft + (toElement.offsetWidth / 2);
-            const y2 = toElement.offsetTop + (toElement.offsetHeight / 2);
+            const x1 = toBoardPixel(fromNode.normalizedPosition && fromNode.normalizedPosition.x, "x");
+            const y1 = toBoardPixel(fromNode.normalizedPosition && fromNode.normalizedPosition.y, "y");
+            const x2 = toBoardPixel(toNode.normalizedPosition && toNode.normalizedPosition.x, "x");
+            const y2 = toBoardPixel(toNode.normalizedPosition && toNode.normalizedPosition.y, "y");
             const midpoint = (y1 + y2) / 2;
 
             const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
