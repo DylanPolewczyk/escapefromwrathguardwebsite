@@ -63,6 +63,8 @@ a {
 
 button {
     font: inherit;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .mono {
@@ -133,6 +135,7 @@ button {
 .viewer-topbar,
 .tree-hero,
 .class-rail-panel,
+.viewer-section-panel,
 .board-panel,
 .section-block {
     padding: 1.5rem;
@@ -583,6 +586,8 @@ button {
 .button-ghost,
 .ghost-link,
 .class-chip,
+.viewer-tab,
+.stats-subtab,
 .class-card-link {
     transition: transform 160ms ease, border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
 }
@@ -591,6 +596,8 @@ button {
 .button-ghost,
 .ghost-link,
 .class-chip,
+.viewer-tab,
+.stats-subtab,
 .panel-actions button {
     display: inline-flex;
     align-items: center;
@@ -620,6 +627,8 @@ button {
 .button-ghost:hover,
 .ghost-link:hover,
 .class-chip:hover,
+.viewer-tab:hover,
+.stats-subtab:hover,
 .home-tab:hover,
 .panel-actions button:hover,
 .class-card:hover {
@@ -864,6 +873,14 @@ button {
     overflow: visible;
 }
 
+.viewer-section-panel {
+    display: grid;
+    grid-area: board;
+    width: 100%;
+    gap: 1rem;
+    overflow: visible;
+}
+
 .viewer-class-panel {
     display: grid;
     gap: 0.8rem;
@@ -874,6 +891,104 @@ button {
 .tree-hero {
     grid-area: hero;
     width: 100%;
+}
+
+.viewer-tabs,
+.stats-subtabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+}
+
+.viewer-tab,
+.stats-subtab {
+    border-color: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.viewer-tab.is-active,
+.stats-subtab.is-active {
+    border-color: var(--stroke-strong);
+    background: linear-gradient(135deg, rgba(217, 168, 79, 0.2), rgba(184, 78, 38, 0.16));
+}
+
+.viewer-tab-panel,
+.stats-subpanel {
+    display: grid;
+    gap: 1rem;
+    min-width: 0;
+}
+
+.stats-scaling-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: end;
+    flex-wrap: wrap;
+}
+
+.stats-scaling-title,
+.stat-scaling-card-title {
+    margin: 0;
+    font-family: "Cinzel", Georgia, serif;
+}
+
+.stats-scaling-copy,
+.stats-scaling-empty {
+    margin: 0;
+    max-width: 70ch;
+    color: var(--muted);
+    line-height: 1.6;
+}
+
+.stats-scaling-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+}
+
+.stat-scaling-card {
+    display: grid;
+    gap: 1rem;
+    padding: 1.1rem;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 24%),
+        linear-gradient(135deg, rgba(217, 168, 79, 0.14), rgba(184, 78, 38, 0.1)),
+        rgba(14, 11, 8, 0.86);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    clip-path: var(--cutout-shape);
+}
+
+.stat-scaling-card-header {
+    display: grid;
+    gap: 0.4rem;
+}
+
+.stat-scaling-rows {
+    display: grid;
+    gap: 0.6rem;
+}
+
+.stat-scaling-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.75rem;
+    align-items: center;
+    padding: 0.85rem 0.95rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.stat-scaling-label {
+    font-size: 0.98rem;
+    letter-spacing: 0.02em;
+}
+
+.stat-scaling-value {
+    color: var(--gold);
+    font-family: "Cinzel", Georgia, serif;
+    font-size: 1rem;
+    letter-spacing: 0.08em;
 }
 
 .class-chip {
@@ -897,9 +1012,15 @@ button {
 
 .board-scroll {
     width: 100%;
-    overflow-x: hidden;
+    overflow-x: auto;
     overflow-y: auto;
     padding-bottom: 0.25rem;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+}
+
+.board-scroll.is-scrollable {
+    padding-bottom: 0.75rem;
 }
 
 .board-fit {
@@ -908,6 +1029,8 @@ button {
     justify-content: center;
     align-items: start;
     width: 100%;
+    min-width: 0;
+    margin: 0 auto;
 }
 
 .talent-board {
@@ -1478,6 +1601,10 @@ button {
     .node-tooltip-actions {
         grid-template-columns: 1fr;
     }
+
+    .stats-scaling-header {
+        align-items: start;
+    }
 }
 
 @media (max-width: 760px) {
@@ -1505,6 +1632,7 @@ button {
     .viewer-topbar,
     .tree-hero,
     .class-rail-panel,
+    .viewer-section-panel,
     .board-panel,
     .section-block {
         padding: 1.1rem;
@@ -1604,6 +1732,21 @@ button {
             "class"
             "hero"
             "board";
+    }
+
+    .viewer-tabs,
+    .stats-subtabs {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .viewer-tab,
+    .stats-subtab {
+        width: 100%;
+    }
+
+    .stat-scaling-row {
+        grid-template-columns: 1fr;
     }
 
     .node-tooltip {

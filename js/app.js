@@ -10,6 +10,89 @@
     const BOARD_Y_SPREAD = 1.12;
     const TIER_UNLOCK_RATIO = 0.5;
     const TOOLTIP_HIDE_DELAY_MS = 120;
+    const COMPACT_VIEWPORT_WIDTH = 760;
+    const COMPACT_BOARD_MIN_SCALE = 0.62;
+    const VIEWER_TAB_TREE = "tree";
+    const VIEWER_TAB_STATS = "stats";
+    const STATS_TAB_SCALING = "scaling";
+    const STAT_SCALING_ORDER = ["Agility", "Dexterity", "Eagle", "Endurance", "Fortitude", "Strength", "Vigor"];
+    const STAT_SCALING_BY_CLASS = {
+        Knight: {
+            Agility: "50%",
+            Dexterity: "50%",
+            Eagle: "50%",
+            Endurance: "175%",
+            Fortitude: "175%",
+            Strength: "150%",
+            Vigor: "200%"
+        },
+        Assassin: {
+            Agility: "175%",
+            Dexterity: "175%",
+            Eagle: "200%",
+            Endurance: "50%",
+            Fortitude: "50%",
+            Strength: "150%",
+            Vigor: "50%"
+        },
+        Dreadnought: {
+            Agility: "50%",
+            Dexterity: "150%",
+            Eagle: "50%",
+            Endurance: "175%",
+            Fortitude: "50%",
+            Strength: "175%",
+            Vigor: "200%"
+        },
+        Barbarian: {
+            Agility: "150%",
+            Dexterity: "50%",
+            Eagle: "50%",
+            Endurance: "50%",
+            Fortitude: "150%",
+            Strength: "250%",
+            Vigor: "150%"
+        },
+        Jester: {
+            Agility: "200%",
+            Dexterity: "200%",
+            Eagle: "200%",
+            Endurance: "50%",
+            Fortitude: "50%",
+            Strength: "50%",
+            Vigor: "100%"
+        },
+        Samurai: {
+            Agility: "150%",
+            Dexterity: "200%",
+            Eagle: "50%",
+            Endurance: "50%",
+            Fortitude: "175%",
+            Strength: "175%",
+            Vigor: "50%"
+        },
+        Monk: {
+            Agility: "200%",
+            Dexterity: "150%",
+            Eagle: "150%",
+            Endurance: "200%",
+            Fortitude: "50%",
+            Strength: "50%",
+            Vigor: "50%"
+        },
+        "Shield Hero": {
+            Agility: "50%",
+            Dexterity: "50%",
+            Eagle: "150%",
+            Endurance: "175%",
+            Fortitude: "225%",
+            Strength: "50%",
+            Vigor: "150%"
+        }
+    };
+    const STAT_SCALING_CLASS_ALIASES = {
+        Viking: "Barbarian"
+    };
 
     const state = {
         data: null,
@@ -17,6 +100,8 @@
         selectedNodeId: null,
         previewRanks: loadPreviewRanks(),
         previewLevel: loadPreviewLevel(),
+        activeViewerTab: VIEWER_TAB_TREE,
+        activeStatsTab: STATS_TAB_SCALING,
         tooltipHideTimer: 0
     };
 
@@ -137,6 +222,7 @@
     function initializeTreePage() {
         const classId = getRequestedClassId();
         bindViewerButtons();
+        bindViewerTabs();
         bindTooltipDismiss();
         window.addEventListener("resize", handleBoardResize);
         if (document.fonts && document.fonts.ready) {
@@ -209,6 +295,23 @@
             });
             playerLevelInput.addEventListener("blur", renderLevelControls);
         }
+    }
+
+    function bindViewerTabs() {
+        document.querySelectorAll("[data-viewer-tab]").forEach(function (button) {
+            button.addEventListener("click", function () {
+                setActiveViewerTab(button.dataset.viewerTab);
+            });
+        });
+
+        document.querySelectorAll("[data-stats-tab]").forEach(function (button) {
+            button.addEventListener("click", function () {
+                setActiveStatsTab(button.dataset.statsTab);
+            });
+        });
+
+        renderViewerTabs();
+        renderStatsTabs();
     }
 
     function bindTooltipDismiss() {
@@ -317,7 +420,98 @@
         renderHero();
         renderLevelControls();
         renderTreeStats();
+        renderStatScaling();
+        renderViewerTabs();
+        renderStatsTabs();
         renderBoard();
+    }
+
+    function setActiveViewerTab(tabName) {
+        state.activeViewerTab = tabName === VIEWER_TAB_STATS ? VIEWER_TAB_STATS : VIEWER_TAB_TREE;
+        renderViewerTabs();
+        if (state.activeViewerTab === VIEWER_TAB_TREE) {
+            window.requestAnimationFrame(handleBoardResize);
+        }
+    }
+
+    function setActiveStatsTab(tabName) {
+        state.activeStatsTab = tabName === STATS_TAB_SCALING ? STATS_TAB_SCALING : STATS_TAB_SCALING;
+        renderStatsTabs();
+    }
+
+    function renderViewerTabs() {
+        const activeTab = state.activeViewerTab;
+        document.querySelectorAll("[data-viewer-tab]").forEach(function (button) {
+            const isActive = button.dataset.viewerTab === activeTab;
+            button.classList.toggle("is-active", isActive);
+            button.setAttribute("aria-selected", isActive ? "true" : "false");
+        });
+
+        document.querySelectorAll("[data-viewer-panel]").forEach(function (panel) {
+            const isActive = panel.dataset.viewerPanel === activeTab;
+            panel.classList.toggle("is-active", isActive);
+            panel.hidden = !isActive;
+        });
+    }
+
+    function renderStatsTabs() {
+        const activeTab = state.activeStatsTab;
+        document.querySelectorAll("[data-stats-tab]").forEach(function (button) {
+            const isActive = button.dataset.statsTab === activeTab;
+            button.classList.toggle("is-active", isActive);
+            button.setAttribute("aria-selected", isActive ? "true" : "false");
+        });
+
+        document.querySelectorAll("[data-stats-panel]").forEach(function (panel) {
+            const isActive = panel.dataset.statsPanel === activeTab;
+            panel.classList.toggle("is-active", isActive);
+            panel.hidden = !isActive;
+        });
+    }
+
+    function renderStatScaling() {
+        const grid = document.getElementById("statsScalingGrid");
+        if (!grid) {
+            return;
+        }
+
+        grid.replaceChildren();
+        if (!state.tree) {
+            return;
+        }
+
+        const scalingKey = resolveStatScalingClassKey(state.tree.classId);
+        const scaling = STAT_SCALING_BY_CLASS[scalingKey];
+        if (!scaling) {
+            grid.appendChild(createElement("p", "stats-scaling-empty", "No stat scaling data is available for this class yet."));
+            return;
+        }
+
+        const card = document.createElement("article");
+        card.className = "stat-scaling-card";
+
+        const header = document.createElement("div");
+        header.className = "stat-scaling-card-header";
+        header.appendChild(createElement("div", "eyebrow", "Stat Scaling"));
+        header.appendChild(createElement("h3", "stat-scaling-card-title", scalingKey));
+        card.appendChild(header);
+
+        const rows = document.createElement("div");
+        rows.className = "stat-scaling-rows";
+        STAT_SCALING_ORDER.forEach(function (statName) {
+            const row = document.createElement("div");
+            row.className = "stat-scaling-row";
+            row.appendChild(createElement("span", "stat-scaling-label", statName));
+            row.appendChild(createElement("span", "stat-scaling-value", scaling[statName] || "0%"));
+            rows.appendChild(row);
+        });
+
+        card.appendChild(rows);
+        grid.appendChild(card);
+    }
+
+    function resolveStatScalingClassKey(classId) {
+        return STAT_SCALING_CLASS_ALIASES[classId] || classId;
     }
 
     function renderClassRail() {
@@ -491,21 +685,27 @@
         button.appendChild(header);
         button.appendChild(title);
         button.appendChild(pips);
-        button.addEventListener("mouseenter", function () {
-            showTooltipForNode(node.id);
-        });
-        button.addEventListener("mouseleave", function (event) {
-            if (isTooltipTarget(event.relatedTarget)) {
-                cancelTooltipHide();
-                return;
-            }
+        if (!prefersTouchInteractions()) {
+            button.addEventListener("mouseenter", function () {
+                showTooltipForNode(node.id);
+            });
+            button.addEventListener("mouseleave", function (event) {
+                if (isTooltipTarget(event.relatedTarget)) {
+                    cancelTooltipHide();
+                    return;
+                }
 
-            scheduleTooltipHide();
-        });
+                scheduleTooltipHide();
+            });
+        }
         button.addEventListener("focus", function () {
             showTooltipForNode(node.id);
         });
         button.addEventListener("blur", function (event) {
+            if (prefersTouchInteractions()) {
+                return;
+            }
+
             if (isTooltipTarget(event.relatedTarget)) {
                 cancelTooltipHide();
                 return;
@@ -536,17 +736,23 @@
         tooltip.style.left = tooltipPosition.left + "px";
         tooltip.style.top = tooltipPosition.top + "px";
         tooltip.style.transform = tooltipPosition.transform;
-        tooltip.addEventListener("mouseenter", cancelTooltipHide);
-        tooltip.addEventListener("mouseleave", function (event) {
-            if (isTalentNodeTarget(event.relatedTarget)) {
-                cancelTooltipHide();
+        if (!prefersTouchInteractions()) {
+            tooltip.addEventListener("mouseenter", cancelTooltipHide);
+            tooltip.addEventListener("mouseleave", function (event) {
+                if (isTalentNodeTarget(event.relatedTarget)) {
+                    cancelTooltipHide();
+                    return;
+                }
+
+                scheduleTooltipHide();
+            });
+        }
+        tooltip.addEventListener("focusin", cancelTooltipHide);
+        tooltip.addEventListener("focusout", function (event) {
+            if (prefersTouchInteractions()) {
                 return;
             }
 
-            scheduleTooltipHide();
-        });
-        tooltip.addEventListener("focusin", cancelTooltipHide);
-        tooltip.addEventListener("focusout", function (event) {
             if (isTooltipTarget(event.relatedTarget) || isTalentNodeTarget(event.relatedTarget)) {
                 cancelTooltipHide();
                 return;
@@ -817,11 +1023,29 @@
             return;
         }
 
+        const treePanel = document.querySelector('[data-viewer-panel="tree"]');
+        if (treePanel && treePanel.hidden) {
+            return;
+        }
+
         const availableWidth = Math.max(1, boardScroll.clientWidth);
-        const scale = Math.min(1, availableWidth / BOARD_WIDTH);
+        const rawScale = Math.min(1, availableWidth / BOARD_WIDTH);
+        const compactViewport = window.innerWidth <= COMPACT_VIEWPORT_WIDTH;
+        const scale = compactViewport ? Math.max(COMPACT_BOARD_MIN_SCALE, rawScale) : rawScale;
+        const scaledWidth = Math.round(BOARD_WIDTH * scale);
+        const scaledHeight = Math.round(BOARD_HEIGHT * scale);
+
+        boardScroll.classList.toggle("is-scrollable", compactViewport && rawScale < COMPACT_BOARD_MIN_SCALE);
+        board.style.transformOrigin = compactViewport ? "top left" : "top center";
         board.style.transform = scale < 0.999 ? "scale(" + scale + ")" : "none";
-        boardFit.style.height = Math.round(BOARD_HEIGHT * scale) + "px";
+        boardFit.style.width = scaledWidth + "px";
+        boardFit.style.minWidth = scaledWidth + "px";
+        boardFit.style.height = scaledHeight + "px";
         scheduleConnectionRender();
+    }
+
+    function prefersTouchInteractions() {
+        return !!(window.matchMedia && window.matchMedia("(hover: none), (pointer: coarse)").matches);
     }
 
     function getSelectedNode() {
