@@ -865,6 +865,30 @@ button {
     justify-items: center;
 }
 
+.contact-card {
+    display: grid;
+    gap: 1rem;
+    width: min(760px, 100%);
+    padding: 2.25rem;
+    text-align: center;
+    justify-items: center;
+}
+
+.contact-copy {
+    max-width: 32ch;
+}
+
+.contact-email {
+    font-family: "Cinzel", Georgia, serif;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    color: var(--gold);
+    overflow-wrap: anywhere;
+}
+
+.contact-email:hover {
+    color: #f0cb84;
+}
+
 .contact-grid {
     display: grid;
     grid-template-columns: minmax(0, 760px);
