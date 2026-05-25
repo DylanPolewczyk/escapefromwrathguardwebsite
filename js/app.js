@@ -71,6 +71,11 @@
             return;
         }
 
+        if (page === "contact") {
+            initializeContactPage();
+            return;
+        }
+
         if (page !== "tree") {
             initializeIndexPage();
             return;
@@ -139,6 +144,37 @@
             card.appendChild(tags);
             card.appendChild(meta);
             grid.appendChild(card);
+        });
+    }
+
+    function initializeContactPage() {
+        bindContactForm();
+    }
+
+    function bindContactForm() {
+        const form = document.getElementById("contactForm");
+        if (!form) {
+            return;
+        }
+
+        form.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(form);
+            const name = String(formData.get("name") || "").trim();
+            const email = String(formData.get("email") || "").trim();
+            const subject = String(formData.get("subject") || "").trim();
+            const message = String(formData.get("message") || "").trim();
+            const composedSubject = subject || "Escape From WrathGuard Contact";
+            const body = [
+                "Name: " + name,
+                "Email: " + email,
+                "",
+                message
+            ].join("\n");
+            const mailtoUrl = "mailto:escapefromwrathguard@gmail.com?subject=" + encodeURIComponent(composedSubject) + "&body=" + encodeURIComponent(body);
+
+            window.location.href = mailtoUrl;
         });
     }
 

@@ -858,6 +858,80 @@ button {
     margin-top: 1rem;
 }
 
+.contact-main {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.85fr);
+    gap: 1rem;
+}
+
+.contact-panel {
+    display: grid;
+    gap: 1rem;
+    padding: 1.5rem;
+}
+
+.contact-form {
+    display: grid;
+    gap: 1rem;
+}
+
+.contact-field {
+    display: grid;
+    gap: 0.45rem;
+    color: var(--text);
+    font-weight: 600;
+}
+
+.contact-input {
+    width: 100%;
+    min-height: 46px;
+    padding: 0.85rem 0.95rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text);
+    font: inherit;
+}
+
+.contact-input:focus {
+    outline: 1px solid var(--stroke-strong);
+    outline-offset: 0;
+}
+
+.contact-textarea {
+    min-height: 220px;
+    resize: vertical;
+}
+
+.contact-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.contact-panel-side {
+    align-content: start;
+}
+
+.contact-side-title {
+    margin: 0;
+    font-family: "Cinzel", Georgia, serif;
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    line-height: 1.15;
+    overflow-wrap: anywhere;
+}
+
+.contact-note {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.6;
+}
+
 .viewer-main {
     display: grid;
     width: 100%;
@@ -1825,6 +1899,10 @@ button {
             "class"
             "hero"
             "board";
+    }
+
+    .contact-grid {
+        grid-template-columns: 1fr;
     }
 
     .stats-subtabs {
