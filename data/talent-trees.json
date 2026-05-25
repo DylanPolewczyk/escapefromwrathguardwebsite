@@ -556,7 +556,7 @@
             "classId": "Assassin",
             "displayName": "Rogue",
             "title": "Rogue Talents",
-            "description": "Rogue talent masteries organized into three knight-style branches.",
+            "description": "Centered Tier 1 launch row branching into Assassination, Outlaw, and Subtlety.",
             "accentColor": "#E64C70FF",
             "branchLabels": [
                 {
@@ -1106,7 +1106,7 @@
             "classId": "Dreadnought",
             "displayName": "Dreadnought",
             "title": "Dreadnought Talents",
-            "description": "Dreadnought talent masteries organized into three knight-style branches.",
+            "description": "Centered Tier 1 launch row branching into Warhammer's Wrath, Ironclad Bulwark, and Siegebreaker.",
             "accentColor": "#F5573DFF",
             "branchLabels": [
                 {
@@ -1656,7 +1656,7 @@
             "classId": "Viking",
             "displayName": "Viking",
             "title": "Viking Talents",
-            "description": "Viking talent masteries organized into three knight-style branches.",
+            "description": "Centered Tier 1 launch row branching into Berserker's Fury, Savage Endurance, and Primal Might.",
             "accentColor": "#E08533FF",
             "branchLabels": [
                 {
@@ -2206,7 +2206,7 @@
             "classId": "Jester",
             "displayName": "Jester",
             "title": "Jester Talents",
-            "description": "Jester talent masteries organized into three knight-style branches.",
+            "description": "Centered Tier 1 launch row branching into Harlequin's Blade, Tumbler's Grace, and Prankster's Ploy.",
             "accentColor": "#E094FAFF",
             "branchLabels": [
                 {
@@ -2756,7 +2756,7 @@
             "classId": "Samurai",
             "displayName": "Samurai",
             "title": "Samurai Talents",
-            "description": "Samurai talent masteries organized into three knight-style branches.",
+            "description": "Centered Tier 1 launch row branching into Iaijutsu Master, Bushido's Honor, and Ronin's Path.",
             "accentColor": "#EB944CFF",
             "branchLabels": [
                 {
@@ -3306,7 +3306,7 @@
             "classId": "Monk",
             "displayName": "Monk",
             "title": "Monk Talents",
-            "description": "Monk talent masteries organized into three knight-style branches.",
+            "description": "Centered Tier 1 launch row branching into Way of the Tiger, Way of the Crane, and Way of the Dragon.",
             "accentColor": "#94E08AFF",
             "branchLabels": [
                 {
@@ -3856,7 +3856,7 @@
             "classId": "Shield Hero",
             "displayName": "Shield Hero",
             "title": "Shield Hero Talents",
-            "description": "Shield Hero talent masteries organized into three knight-style branches.",
+            "description": "Centered Tier 1 launch row branching into Shieldbreaker, Bastion of Valor, and Protector's Oath.",
             "accentColor": "#75B8FFFF",
             "branchLabels": [
                 {

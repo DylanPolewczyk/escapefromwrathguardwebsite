@@ -476,6 +476,12 @@
             event.stopPropagation();
             showTooltipForNode(node.id);
         });
+        button.addEventListener("dblclick", function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            showTooltipForNode(node.id);
+            tryAddPreviewRank(node);
+        });
 
         return button;
     }
@@ -924,6 +930,17 @@
             disabled: false,
             reason: ""
         };
+    }
+
+    function tryAddPreviewRank(node) {
+        const addRankState = resolveAddRankState(node);
+        if (addRankState.disabled) {
+            return false;
+        }
+
+        const nextRank = Math.min(Math.max(1, Number(node.rankCount || 1)), getPreviewRank(node.id) + 1);
+        setPreviewRank(node.id, nextRank);
+        return true;
     }
 
     function resolveTierUnlockState(node) {
