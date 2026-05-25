@@ -23,6 +23,12 @@
     document.addEventListener("DOMContentLoaded", initialize);
 
     async function initialize() {
+        const page = document.body.dataset.page;
+        if (page !== "tree") {
+            initializeIndexPage();
+            return;
+        }
+
         try {
             state.data = await loadTalentData();
         } catch (error) {
@@ -36,13 +42,7 @@
             return;
         }
 
-        const page = document.body.dataset.page;
-        if (page === "tree") {
-            initializeTreePage();
-            return;
-        }
-
-        initializeIndexPage();
+        initializeTreePage();
     }
 
     async function loadTalentData() {
