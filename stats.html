@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Escape From Wrathguard | Stats</title>
+    <meta name="description" content="Review class stat scaling for Escape From Wrathguard.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css?v=20260525a">
+</head>
+<body data-page="stats">
+    <div class="viewer-shell">
+        <header class="viewer-topbar panel-cutout reveal-up">
+            <div class="viewer-topbar-links">
+                <a class="ghost-link" href="index.html">All Classes</a>
+                <a class="ghost-link" id="relatedPageLink" href="talent-tree.html">Talent Trees</a>
+            </div>
+            <div class="viewer-branding">
+                <div class="eyebrow">Escape From Wrathguard</div>
+                <div class="viewer-brand-title">Class Stats</div>
+            </div>
+        </header>
+
+        <div class="state-message hidden" data-state-message></div>
+
+        <div class="viewer-layout">
+            <main class="viewer-main reveal-up">
+                <section class="panel-cutout class-rail-panel viewer-class-panel">
+                    <div class="eyebrow">Switch Class</div>
+                    <div class="class-rail" id="classRail"></div>
+                </section>
+
+                <section class="tree-hero panel-cutout" id="treeHero">
+                    <div class="eyebrow" id="treeEyebrow">Stats</div>
+                    <h1 id="treeTitle">Loading...</h1>
+                    <p class="tree-description" id="treeDescription">Class stat scaling will appear here.</p>
+                </section>
+
+                <section class="panel-cutout viewer-section-panel">
+                    <div class="stats-subtabs" id="statsSubtabs" role="tablist" aria-label="Stats details">
+                        <button class="stats-subtab is-active" id="statsSubtabScaling" type="button" data-stats-tab="scaling" role="tab" aria-selected="true" aria-controls="statsPanelScaling">Stat Scaling</button>
+                    </div>
+
+                    <div class="stats-subpanel is-active" id="statsPanelScaling" data-stats-panel="scaling" role="tabpanel" aria-labelledby="statsSubtabScaling">
+                        <div class="stats-scaling-header">
+                            <div>
+                                <div class="eyebrow">Stats</div>
+                                <h2 class="stats-scaling-title">Class Stat Scaling</h2>
+                            </div>
+                            <p class="stats-scaling-copy">Each class scales differently. Use the class selector to compare how every archetype grows from each stat.</p>
+                        </div>
+                        <div class="stats-scaling-grid" id="statsScalingGrid"></div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <script src="js/app.js?v=20260525a" defer></script>
+</body>
+</html>

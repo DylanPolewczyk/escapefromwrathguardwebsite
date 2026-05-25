@@ -12,8 +12,6 @@
     const TOOLTIP_HIDE_DELAY_MS = 120;
     const COMPACT_VIEWPORT_WIDTH = 760;
     const COMPACT_BOARD_MIN_SCALE = 0.62;
-    const VIEWER_TAB_TREE = "tree";
-    const VIEWER_TAB_STATS = "stats";
     const STATS_TAB_SCALING = "scaling";
     const STAT_SCALING_ORDER = ["Agility", "Dexterity", "Eagle", "Endurance", "Fortitude", "Strength", "Vigor"];
     const STAT_SCALING_BY_CLASS = {
@@ -26,7 +24,7 @@
             Strength: "150%",
             Vigor: "200%"
         },
-        Assassin: {
+        Rogue: {
             Agility: "175%",
             Dexterity: "175%",
             Eagle: "200%",
@@ -91,6 +89,7 @@
         }
     };
     const STAT_SCALING_CLASS_ALIASES = {
+        Assassin: "Rogue",
         Viking: "Barbarian"
     };
 
@@ -100,7 +99,6 @@
         selectedNodeId: null,
         previewRanks: loadPreviewRanks(),
         previewLevel: loadPreviewLevel(),
-        activeViewerTab: VIEWER_TAB_TREE,
         activeStatsTab: STATS_TAB_SCALING,
         tooltipHideTimer: 0
     };
@@ -109,7 +107,7 @@
 
     async function initialize() {
         const page = document.body.dataset.page;
-        if (page !== "tree") {
+        if (page !== "tree" && page !== "stats") {
             initializeIndexPage();
             return;
         }
@@ -124,6 +122,11 @@
 
         if (!state.data || !Array.isArray(state.data.classes) || state.data.classes.length === 0) {
             showStateMessage("No talent tree data was found. Run the Unity menu action Tools > Talent Trees > Export Web Preview Data to generate data/talent-trees.json.");
+            return;
+        }
+
+        if (page === "stats") {
+            initializeStatsPage();
             return;
         }
 
@@ -222,12 +225,19 @@
     function initializeTreePage() {
         const classId = getRequestedClassId();
         bindViewerButtons();
-        bindViewerTabs();
         bindTooltipDismiss();
         window.addEventListener("resize", handleBoardResize);
         if (document.fonts && document.fonts.ready) {
             document.fonts.ready.then(handleBoardResize).catch(function () {});
         }
+
+        const tree = findTree(classId) || state.data.classes[0];
+        setCurrentTree(tree.classId);
+    }
+
+    function initializeStatsPage() {
+        const classId = getRequestedClassId();
+        bindStatsTabs();
 
         const tree = findTree(classId) || state.data.classes[0];
         setCurrentTree(tree.classId);
@@ -297,20 +307,13 @@
         }
     }
 
-    function bindViewerTabs() {
-        document.querySelectorAll("[data-viewer-tab]").forEach(function (button) {
-            button.addEventListener("click", function () {
-                setActiveViewerTab(button.dataset.viewerTab);
-            });
-        });
-
+    function bindStatsTabs() {
         document.querySelectorAll("[data-stats-tab]").forEach(function (button) {
             button.addEventListener("click", function () {
                 setActiveStatsTab(button.dataset.statsTab);
             });
         });
 
-        renderViewerTabs();
         renderStatsTabs();
     }
 
@@ -418,40 +421,17 @@
 
         renderClassRail();
         renderHero();
+        renderRelatedPageLink();
         renderLevelControls();
         renderTreeStats();
         renderStatScaling();
-        renderViewerTabs();
         renderStatsTabs();
         renderBoard();
-    }
-
-    function setActiveViewerTab(tabName) {
-        state.activeViewerTab = tabName === VIEWER_TAB_STATS ? VIEWER_TAB_STATS : VIEWER_TAB_TREE;
-        renderViewerTabs();
-        if (state.activeViewerTab === VIEWER_TAB_TREE) {
-            window.requestAnimationFrame(handleBoardResize);
-        }
     }
 
     function setActiveStatsTab(tabName) {
         state.activeStatsTab = tabName === STATS_TAB_SCALING ? STATS_TAB_SCALING : STATS_TAB_SCALING;
         renderStatsTabs();
-    }
-
-    function renderViewerTabs() {
-        const activeTab = state.activeViewerTab;
-        document.querySelectorAll("[data-viewer-tab]").forEach(function (button) {
-            const isActive = button.dataset.viewerTab === activeTab;
-            button.classList.toggle("is-active", isActive);
-            button.setAttribute("aria-selected", isActive ? "true" : "false");
-        });
-
-        document.querySelectorAll("[data-viewer-panel]").forEach(function (panel) {
-            const isActive = panel.dataset.viewerPanel === activeTab;
-            panel.classList.toggle("is-active", isActive);
-            panel.hidden = !isActive;
-        });
     }
 
     function renderStatsTabs() {
@@ -522,7 +502,7 @@
 
         rail.replaceChildren();
         state.data.classes.forEach(function (tree) {
-            const button = createElement("button", "class-chip", tree.displayName || tree.classId);
+            const button = createElement("button", "class-chip", resolveClassRailLabel(tree));
             button.type = "button";
             if (state.tree && tree.classId === state.tree.classId) {
                 button.classList.add("is-active");
@@ -541,6 +521,7 @@
             return;
         }
 
+        const page = document.body.dataset.page;
         const treeHero = document.getElementById("treeHero");
         const treeEyebrow = document.getElementById("treeEyebrow");
         const treeTitle = document.getElementById("treeTitle");
@@ -548,6 +529,20 @@
 
         if (treeHero) {
             treeHero.style.setProperty("--accent-color", state.tree.accentColor || "rgba(217, 168, 79, 0.24)");
+        }
+
+        if (page === "stats") {
+            const statsLabel = resolveStatScalingClassKey(state.tree.classId);
+            if (treeEyebrow) {
+                treeEyebrow.textContent = "Stats";
+            }
+            if (treeTitle) {
+                treeTitle.textContent = statsLabel + " Stats";
+            }
+            if (treeDescription) {
+                treeDescription.textContent = "Review how " + statsLabel + " scales with each core stat in Escape From Wrathguard.";
+            }
+            return;
         }
 
         if (treeEyebrow) {
@@ -561,6 +556,29 @@
         if (treeDescription) {
             treeDescription.textContent = state.tree.description || "Browse the full node graph, inspect descriptions, and preview local rank allocation.";
         }
+    }
+
+    function renderRelatedPageLink() {
+        const relatedPageLink = document.getElementById("relatedPageLink");
+        if (!relatedPageLink || !state.tree) {
+            return;
+        }
+
+        const page = document.body.dataset.page;
+        const nextPath = page === "stats" ? "talent-tree.html" : "stats.html";
+        relatedPageLink.href = nextPath + "?class=" + encodeURIComponent(state.tree.classId);
+    }
+
+    function resolveClassRailLabel(tree) {
+        if (!tree) {
+            return "Class";
+        }
+
+        if (document.body.dataset.page === "stats") {
+            return resolveStatScalingClassKey(tree.classId);
+        }
+
+        return tree.displayName || tree.classId;
     }
 
     function renderTreeStats() {
@@ -1020,11 +1038,6 @@
         const boardFit = document.getElementById("boardFit");
         const boardScroll = document.querySelector(".board-scroll");
         if (!board || !boardFit || !boardScroll) {
-            return;
-        }
-
-        const treePanel = document.querySelector('[data-viewer-panel="tree"]');
-        if (treePanel && treePanel.hidden) {
             return;
         }
 

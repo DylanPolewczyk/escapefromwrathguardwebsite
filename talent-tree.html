@@ -8,12 +8,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=20260524p">
+    <link rel="stylesheet" href="css/style.css?v=20260525a">
 </head>
 <body data-page="tree">
     <div class="viewer-shell">
         <header class="viewer-topbar panel-cutout reveal-up">
-            <a class="ghost-link" href="index.html">All Classes</a>
+            <div class="viewer-topbar-links">
+                <a class="ghost-link" href="index.html">All Classes</a>
+                <a class="ghost-link" id="relatedPageLink" href="stats.html">Stats</a>
+            </div>
             <div class="viewer-branding">
                 <div class="eyebrow">Escape From Wrathguard</div>
                 <div class="viewer-brand-title">Interactive Talent Viewer</div>
@@ -49,33 +52,9 @@
                 </section>
 
                 <section class="panel-cutout viewer-section-panel">
-                    <div class="viewer-tabs" id="viewerTabs" role="tablist" aria-label="Class sections">
-                        <button class="viewer-tab is-active" id="viewerTabTree" type="button" data-viewer-tab="tree" role="tab" aria-selected="true" aria-controls="viewerPanelTree">Talent Tree</button>
-                        <button class="viewer-tab" id="viewerTabStats" type="button" data-viewer-tab="stats" role="tab" aria-selected="false" aria-controls="viewerPanelStats">Stats</button>
-                    </div>
-
-                    <div class="viewer-tab-panel is-active" id="viewerPanelTree" data-viewer-panel="tree" role="tabpanel" aria-labelledby="viewerTabTree">
-                        <div class="board-scroll">
-                            <div class="board-fit" id="boardFit">
-                                <div class="talent-board" id="talentBoard"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="viewer-tab-panel" id="viewerPanelStats" data-viewer-panel="stats" role="tabpanel" aria-labelledby="viewerTabStats" hidden>
-                        <div class="stats-subtabs" id="statsSubtabs" role="tablist" aria-label="Stats details">
-                            <button class="stats-subtab is-active" id="statsSubtabScaling" type="button" data-stats-tab="scaling" role="tab" aria-selected="true" aria-controls="statsPanelScaling">Stat Scaling</button>
-                        </div>
-
-                        <div class="stats-subpanel is-active" id="statsPanelScaling" data-stats-panel="scaling" role="tabpanel" aria-labelledby="statsSubtabScaling">
-                            <div class="stats-scaling-header">
-                                <div>
-                                    <div class="eyebrow">Stats</div>
-                                    <h2 class="stats-scaling-title">Class Stat Scaling</h2>
-                                </div>
-                                <p class="stats-scaling-copy">Each class scales differently. Use the class selector above to compare how every archetype grows from each stat.</p>
-                            </div>
-                            <div class="stats-scaling-grid" id="statsScalingGrid"></div>
+                    <div class="board-scroll">
+                        <div class="board-fit" id="boardFit">
+                            <div class="talent-board" id="talentBoard"></div>
                         </div>
                     </div>
                 </section>
@@ -83,6 +62,6 @@
         </div>
     </div>
 
-    <script src="js/app.js?v=20260524p" defer></script>
+    <script src="js/app.js?v=20260525a" defer></script>
 </body>
 </html>
