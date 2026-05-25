@@ -876,6 +876,31 @@ body[data-page="contact"] {
     isolation: isolate;
 }
 
+.contact-nav {
+    position: absolute;
+    top: clamp(0.85rem, 2vw, 1.35rem);
+    left: 50%;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.7rem;
+    width: min(100%, calc(100% - 1.5rem));
+    transform: translateX(-50%);
+}
+
+.contact-nav .ghost-link {
+    min-height: 42px;
+    padding: 0.65rem 0.9rem;
+    background: rgba(7, 16, 28, 0.68);
+    border-color: rgba(118, 233, 255, 0.2);
+    backdrop-filter: blur(12px);
+}
+
+.contact-nav .ghost-link:hover {
+    border-color: rgba(240, 203, 132, 0.48);
+}
+
 .contact-cyberspace {
     position: absolute;
     inset: 0;
@@ -1132,15 +1157,6 @@ body[data-page="contact"] {
     inset: 0;
     pointer-events: none;
     background: linear-gradient(120deg, transparent 0%, rgba(164, 244, 255, 0.08) 18%, transparent 36%);
-}
-
-.contact-kicker {
-    font-family: "Aquire", "Cinzel", Georgia, serif;
-    font-size: 0.78rem;
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
-    color: rgba(134, 241, 255, 0.88);
-    text-shadow: 0 0 14px rgba(89, 220, 255, 0.34);
 }
 
 .contact-copy {
@@ -2213,6 +2229,17 @@ body[data-page="contact"] {
 
     .contact-scene {
         padding: 1rem;
+    }
+
+    .contact-nav {
+        top: 0.75rem;
+        gap: 0.5rem;
+    }
+
+    .contact-nav .ghost-link {
+        min-height: 40px;
+        padding: 0.55rem 0.8rem;
+        font-size: 0.68rem;
     }
 
     .cyber-runway {
