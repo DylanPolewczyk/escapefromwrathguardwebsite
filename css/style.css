@@ -862,18 +862,22 @@ button {
     display: grid;
     gap: 1rem;
     margin-top: 1rem;
+    justify-items: center;
 }
 
 .contact-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1.45fr) minmax(280px, 0.85fr);
+    grid-template-columns: minmax(0, 760px);
     gap: 1rem;
+    width: 100%;
+    justify-content: center;
 }
 
 .contact-panel {
     display: grid;
     gap: 1rem;
     padding: 1.5rem;
+    width: 100%;
 }
 
 .contact-form {
@@ -912,18 +916,6 @@ button {
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
-}
-
-.contact-panel-side {
-    align-content: start;
-}
-
-.contact-side-title {
-    margin: 0;
-    font-family: "Cinzel", Georgia, serif;
-    font-size: clamp(1.5rem, 3vw, 2.2rem);
-    line-height: 1.15;
-    overflow-wrap: anywhere;
 }
 
 .contact-note {

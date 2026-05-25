@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=20260525d">
+    <link rel="stylesheet" href="css/style.css?v=20260525e">
 </head>
 <body data-page="contact">
     <div class="viewer-shell">
@@ -27,15 +27,16 @@
 
         <main class="contact-main">
             <section class="tree-hero panel-cutout reveal-up">
-                <div class="eyebrow">Direct Contact</div>
                 <h1>Send A Message</h1>
-                <p class="tree-description">Fill out the form below and the Send Email button will open your default email app with your message addressed to the WrathGuard inbox.</p>
+                <p class="tree-description">Fill out the form below and submit it directly to the WrathGuard inbox.</p>
             </section>
 
             <section class="contact-grid reveal-up">
                 <article class="panel-cutout contact-panel">
-                    <div class="eyebrow">Standard Form</div>
-                    <form class="contact-form" id="contactForm">
+                    <form class="contact-form" id="contactForm" action="https://formsubmit.co/escapefromwrathguard@gmail.com" method="POST">
+                        <input type="hidden" name="_subject" value="Escape From WrathGuard Contact Form">
+                        <input type="hidden" name="_captcha" value="false">
+                        <input type="hidden" name="_template" value="table">
                         <label class="contact-field" for="contactName">
                             <span>Name</span>
                             <input class="contact-input" id="contactName" name="name" type="text" autocomplete="name" required>
@@ -55,20 +56,13 @@
                         <div class="contact-actions">
                             <button class="button-ornate" type="submit">Send Email</button>
                         </div>
+                        <p class="contact-note">Messages are sent to escapefromwrathguard@gmail.com. The first submission may require confirming FormSubmit activation from that inbox.</p>
                     </form>
                 </article>
-
-                <aside class="panel-cutout contact-panel contact-panel-side">
-                    <div class="eyebrow">Mail Destination</div>
-                    <h2 class="contact-side-title">escapefromwrathguard@gmail.com</h2>
-                    <p class="section-copy">This site is deployed as a static page, so sending uses your device's default email application with the completed form values already filled in.</p>
-                    <a class="button-ghost" href="mailto:escapefromwrathguard@gmail.com">Open Email App</a>
-                    <p class="contact-note">If no email app opens, copy the address above into your preferred email service.</p>
-                </aside>
             </section>
         </main>
     </div>
 
-    <script src="js/app.js?v=20260525d" defer></script>
+    <script src="js/app.js?v=20260525e" defer></script>
 </body>
 </html>
