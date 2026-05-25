@@ -195,7 +195,7 @@ button {
 .storm-eye,
 .ion-veil,
 .contagion-stream,
-.cyber-contagion {
+.virus-flare {
     position: absolute;
 }
 
@@ -329,67 +329,76 @@ button {
     animation-delay: -1.3s;
 }
 
-.cyber-contagion {
-    inset: auto auto 6% 8%;
-    width: 34%;
-    height: 30%;
-    background:
-        radial-gradient(circle at 46% 50%, rgba(211, 255, 245, 0.34) 0 8%, rgba(124, 255, 221, 0.2) 9% 15%, transparent 17%),
-        radial-gradient(circle at 24% 42%, rgba(149, 255, 228, 0.28) 0 4.5%, transparent 7%),
-        radial-gradient(circle at 61% 28%, rgba(149, 255, 228, 0.2) 0 4%, transparent 7%),
-        radial-gradient(circle at 72% 58%, rgba(149, 255, 228, 0.24) 0 5%, transparent 8%),
-        radial-gradient(circle at 34% 74%, rgba(149, 255, 228, 0.22) 0 5%, transparent 9%),
-        conic-gradient(from 90deg at 48% 50%, rgba(149, 255, 228, 0.18), transparent 14%, rgba(149, 255, 228, 0.1) 28%, transparent 42%, rgba(149, 255, 228, 0.16) 56%, transparent 72%, rgba(149, 255, 228, 0.12) 88%, transparent);
-    filter: blur(0.3px);
-    opacity: 0.82;
+.virus-flare {
+    width: var(--flare-size, 0.95rem);
+    height: var(--flare-size, 0.95rem);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(229, 255, 249, 0.98) 0 20%, rgba(146, 255, 226, 0.92) 32%, rgba(99, 255, 214, 0.54) 52%, rgba(99, 255, 214, 0) 76%);
+    box-shadow: 0 0 10px rgba(120, 255, 223, 0.55), 0 0 22px rgba(120, 255, 223, 0.28);
     mix-blend-mode: screen;
-    animation: contagion-cluster 6.4s cubic-bezier(0.2, 0.7, 0.2, 1) infinite;
+    opacity: 0.76;
 }
 
-.cyber-contagion::before,
-.cyber-contagion::after {
+.virus-flare::before,
+.virus-flare::after {
     content: "";
     position: absolute;
-    inset: 0;
 }
 
-.cyber-contagion::before {
-    background:
-        radial-gradient(circle at 18% 42%, rgba(149, 255, 228, 0.36) 0 5%, transparent 7%),
-        radial-gradient(circle at 78% 36%, rgba(149, 255, 228, 0.28) 0 4%, transparent 6%),
-        radial-gradient(circle at 64% 72%, rgba(149, 255, 228, 0.26) 0 5%, transparent 7%),
-        linear-gradient(28deg, transparent 0 34%, rgba(149, 255, 228, 0.18) 36% 38%, transparent 40% 100%),
-        linear-gradient(116deg, transparent 0 38%, rgba(149, 255, 228, 0.16) 39% 41%, transparent 42% 100%),
-        linear-gradient(82deg, transparent 0 46%, rgba(149, 255, 228, 0.12) 47% 48%, transparent 49% 100%);
-    filter: blur(0.8px);
-    opacity: 0.82;
-    animation: virus-twitch 4.2s steps(3, end) infinite;
+.virus-flare::before {
+    inset: -180%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(120, 255, 223, 0.22) 0 8%, rgba(120, 255, 223, 0.12) 20%, rgba(120, 255, 223, 0) 64%);
+    filter: blur(8px);
+    opacity: 0.38;
+    animation: firefly-aura 4.6s ease-in-out infinite;
 }
 
-.cyber-contagion::after {
-    inset: -12%;
-    background:
-        radial-gradient(circle at 42% 50%, rgba(149, 255, 228, 0.2) 0 20%, transparent 34%),
-        radial-gradient(circle at 22% 40%, rgba(149, 255, 228, 0.16) 0 12%, transparent 24%),
-        radial-gradient(circle at 76% 58%, rgba(149, 255, 228, 0.18) 0 14%, transparent 28%),
-        radial-gradient(circle at 56% 76%, rgba(149, 255, 228, 0.14) 0 10%, transparent 22%);
-    filter: blur(10px);
-    opacity: 0.48;
-    animation: virus-bloom 5.8s ease-in-out infinite;
+.virus-flare::after {
+    inset: -60%;
+    border-radius: 50%;
+    border: 1px solid rgba(169, 255, 237, 0.2);
+    opacity: 0.24;
+    animation: firefly-ring 5.2s ease-in-out infinite;
 }
 
-.cyber-contagion-one {
-    bottom: 4%;
-    left: 12%;
+.virus-flare-one {
+    --flare-size: 1rem;
+    top: 54%;
+    left: 8%;
+    animation: virus-float-one 14.5s ease-in-out infinite, firefly-glimmer 4.9s ease-in-out infinite;
 }
 
-.cyber-contagion-two {
+.virus-flare-two {
+    --flare-size: 0.78rem;
+    top: 66%;
+    left: 26%;
+    opacity: 0.58;
+    animation: virus-float-two 11.8s ease-in-out infinite, firefly-glimmer 4.2s ease-in-out infinite -1.6s;
+}
+
+.virus-flare-three {
+    --flare-size: 0.86rem;
+    top: 40%;
     left: 48%;
-    bottom: 16%;
-    width: 22%;
-    height: 22%;
     opacity: 0.54;
-    animation-delay: -2.6s;
+    animation: virus-float-three 13.2s ease-in-out infinite, firefly-glimmer 5.4s ease-in-out infinite -2.4s;
+}
+
+.virus-flare-four {
+    --flare-size: 0.68rem;
+    top: 24%;
+    left: 68%;
+    opacity: 0.46;
+    animation: virus-float-four 10.6s ease-in-out infinite, firefly-glimmer 3.9s ease-in-out infinite -0.8s;
+}
+
+.virus-flare-five {
+    --flare-size: 0.92rem;
+    top: 58%;
+    left: 70%;
+    opacity: 0.62;
+    animation: virus-float-five 15.1s ease-in-out infinite, firefly-glimmer 5.7s ease-in-out infinite -3s;
 }
 
 .landing-banner::after {
@@ -1235,57 +1244,152 @@ button {
     }
 }
 
-@keyframes contagion-cluster {
+@keyframes firefly-glimmer {
     0%,
     100% {
-        transform: translate3d(0, 0, 0) scale(0.94);
-        opacity: 0.46;
+        opacity: 0.22;
+        filter: saturate(0.95);
     }
 
-    35% {
-        transform: translate3d(0.7rem, -0.35rem, 0) scale(1.08);
-        opacity: 0.88;
+    18% {
+        opacity: 0.86;
     }
 
-    60% {
-        transform: translate3d(1.25rem, -0.9rem, 0) scale(1.16);
+    34% {
+        opacity: 0.38;
+    }
+
+    58% {
         opacity: 0.94;
     }
 
-    78% {
-        transform: translate3d(0.25rem, 0.2rem, 0) scale(1.02);
-        opacity: 0.64;
+    72% {
+        opacity: 0.3;
+    }
+
+    88% {
+        opacity: 0.72;
     }
 }
 
-@keyframes virus-twitch {
+@keyframes virus-float-one {
     0%,
     100% {
-        transform: rotate(0deg) scale(0.98);
-        opacity: 0.62;
+        transform: translate3d(0, 0, 0) rotate(-4deg);
     }
 
-    30% {
-        transform: rotate(-4deg) scale(1.02);
-        opacity: 0.9;
+    23% {
+        transform: translate3d(1.2rem, -1rem, 0) rotate(2deg);
     }
 
-    65% {
-        transform: rotate(3deg) scale(1.06);
-        opacity: 0.78;
+    57% {
+        transform: translate3d(2.1rem, 0.6rem, 0) rotate(6deg);
+    }
+
+    81% {
+        transform: translate3d(0.7rem, 1.1rem, 0) rotate(1deg);
     }
 }
 
-@keyframes virus-bloom {
+@keyframes virus-float-two {
     0%,
     100% {
-        transform: scale(0.86);
-        opacity: 0.22;
+        transform: translate3d(0, 0, 0) rotate(3deg);
+    }
+
+    28% {
+        transform: translate3d(-0.8rem, -1.3rem, 0) rotate(-4deg);
+    }
+
+    62% {
+        transform: translate3d(1.5rem, -0.2rem, 0) rotate(5deg);
+    }
+
+    84% {
+        transform: translate3d(0.3rem, 1rem, 0) rotate(-1deg);
+    }
+}
+
+@keyframes virus-float-three {
+    0%,
+    100% {
+        transform: translate3d(0, 0, 0) rotate(-2deg);
+    }
+
+    19% {
+        transform: translate3d(-1rem, 0.4rem, 0) rotate(4deg);
+    }
+
+    48% {
+        transform: translate3d(1.4rem, -1.2rem, 0) rotate(-6deg);
+    }
+
+    76% {
+        transform: translate3d(2rem, 0.8rem, 0) rotate(2deg);
+    }
+}
+
+@keyframes virus-float-four {
+    0%,
+    100% {
+        transform: translate3d(0, 0, 0) rotate(2deg);
+    }
+
+    34% {
+        transform: translate3d(-1.4rem, 0.7rem, 0) rotate(-5deg);
+    }
+
+    58% {
+        transform: translate3d(0.6rem, 1.4rem, 0) rotate(6deg);
+    }
+
+    86% {
+        transform: translate3d(1.8rem, -0.6rem, 0) rotate(-1deg);
+    }
+}
+
+@keyframes virus-float-five {
+    0%,
+    100% {
+        transform: translate3d(0, 0, 0) rotate(-3deg);
+    }
+
+    26% {
+        transform: translate3d(-1.1rem, -0.9rem, 0) rotate(4deg);
+    }
+
+    51% {
+        transform: translate3d(-2rem, 0.4rem, 0) rotate(-4deg);
+    }
+
+    79% {
+        transform: translate3d(0.8rem, 1.2rem, 0) rotate(3deg);
+    }
+}
+
+@keyframes firefly-aura {
+    0%,
+    100% {
+        transform: scale(0.74);
+        opacity: 0.12;
     }
 
     50% {
-        transform: scale(1.18);
-        opacity: 0.58;
+        transform: scale(1.22);
+        opacity: 0.34;
+    }
+}
+
+@keyframes firefly-ring {
+    0%,
+    100% {
+        transform: scale(0.82);
+        opacity: 0.08;
+    }
+
+    50% {
+        transform: scale(1.16);
+        opacity: 0.26;
     }
 }
 
@@ -1395,15 +1499,29 @@ button {
         height: 14rem;
     }
 
-    .cyber-contagion-one {
+    .virus-flare-one {
+        top: 58%;
         left: 4%;
-        width: 42%;
     }
 
-    .cyber-contagion-two {
-        left: 48%;
-        bottom: 10%;
-        width: 28%;
+    .virus-flare-two {
+        top: 68%;
+        left: 24%;
+    }
+
+    .virus-flare-three {
+        top: 46%;
+        left: 44%;
+    }
+
+    .virus-flare-four {
+        top: 24%;
+        left: 64%;
+    }
+
+    .virus-flare-five {
+        top: 62%;
+        left: 66%;
     }
 
     .landing-banner-top {
