@@ -55,6 +55,8 @@
     }
 
     function initializeIndexPage() {
+        bindHomeMenu();
+
         const grid = document.getElementById("classGrid");
         if (!grid) {
             return;
@@ -90,6 +92,45 @@
             card.appendChild(tags);
             card.appendChild(meta);
             grid.appendChild(card);
+        });
+    }
+
+    function bindHomeMenu() {
+        const menuButton = document.getElementById("homeMenuButton");
+        const homeTabs = document.getElementById("homeTabs");
+        if (!menuButton || !homeTabs) {
+            return;
+        }
+
+        function setOpen(nextOpen) {
+            menuButton.setAttribute("aria-expanded", nextOpen ? "true" : "false");
+            homeTabs.classList.toggle("is-open", nextOpen);
+        }
+
+        menuButton.addEventListener("click", function (event) {
+            event.stopPropagation();
+            const nextOpen = menuButton.getAttribute("aria-expanded") !== "true";
+            setOpen(nextOpen);
+        });
+
+        homeTabs.querySelectorAll("a").forEach(function (link) {
+            link.addEventListener("click", function () {
+                setOpen(false);
+            });
+        });
+
+        document.addEventListener("click", function (event) {
+            if (event.target.closest(".home-nav-menu")) {
+                return;
+            }
+
+            setOpen(false);
+        });
+
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape") {
+                setOpen(false);
+            }
         });
     }
 
@@ -722,12 +763,12 @@
             return;
         }
 
-        const boardRect = board.getBoundingClientRect();
-        const width = Math.max(1, Math.round(boardRect.width));
-        const height = Math.max(1, Math.round(boardRect.height));
+        const width = Math.max(1, Math.round(board.offsetWidth || BOARD_WIDTH));
+        const height = Math.max(1, Math.round(board.offsetHeight || BOARD_HEIGHT));
         layer.setAttribute("viewBox", "0 0 " + width + " " + height);
-        layer.setAttribute("width", String(width));
-        layer.setAttribute("height", String(height));
+        layer.setAttribute("width", "100%");
+        layer.setAttribute("height", "100%");
+        layer.setAttribute("preserveAspectRatio", "none");
         while (layer.firstChild) {
             layer.removeChild(layer.firstChild);
         }
@@ -743,13 +784,10 @@
                 return;
             }
 
-            const fromRect = fromElement.getBoundingClientRect();
-            const toRect = toElement.getBoundingClientRect();
-
-            const x1 = (fromRect.left - boardRect.left) + (fromRect.width / 2);
-            const y1 = (fromRect.top - boardRect.top) + (fromRect.height / 2);
-            const x2 = (toRect.left - boardRect.left) + (toRect.width / 2);
-            const y2 = (toRect.top - boardRect.top) + (toRect.height / 2);
+            const x1 = fromElement.offsetLeft + (fromElement.offsetWidth / 2);
+            const y1 = fromElement.offsetTop + (fromElement.offsetHeight / 2);
+            const x2 = toElement.offsetLeft + (toElement.offsetWidth / 2);
+            const y2 = toElement.offsetTop + (toElement.offsetHeight / 2);
             const midpoint = (y1 + y2) / 2;
 
             const path = document.createElementNS("http://www.w3.org/2000/svg", "path");

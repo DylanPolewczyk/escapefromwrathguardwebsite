@@ -8,17 +8,24 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=20260524n">
+    <link rel="stylesheet" href="css/style.css?v=20260524o">
 </head>
 <body data-page="index">
     <div class="page-shell page-shell-home">
         <header class="landing-banner panel-cutout reveal-up">
             <div class="landing-banner-top">
                 <div class="landing-brand-mark">Escape from WrathGuard</div>
-                <nav class="home-tabs" aria-label="Home navigation">
-                    <a class="home-tab" href="#about">About</a>
-                    <a class="home-tab" href="talent-tree.html">Talent Trees</a>
-                </nav>
+                <div class="home-nav-menu">
+                    <button class="home-menu-button" id="homeMenuButton" type="button" aria-label="Toggle navigation" aria-expanded="false" aria-controls="homeTabs">
+                        <span class="home-menu-button-line"></span>
+                        <span class="home-menu-button-line"></span>
+                        <span class="home-menu-button-line"></span>
+                    </button>
+                    <nav class="home-tabs" id="homeTabs" aria-label="Home navigation">
+                        <a class="home-tab" href="#about">About</a>
+                        <a class="home-tab" href="talent-tree.html">Talent Trees</a>
+                    </nav>
+                </div>
             </div>
 
             <div class="alien-invasion" aria-hidden="true">
