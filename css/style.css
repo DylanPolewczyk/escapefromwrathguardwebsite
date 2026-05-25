@@ -1617,9 +1617,10 @@ body[data-page="contact"] {
 .board-scroll {
     width: 100%;
     overflow-x: auto;
-    overflow-y: auto;
+    overflow-y: visible;
     padding-bottom: 0.25rem;
-    overscroll-behavior: contain;
+    overscroll-behavior-x: contain;
+    overscroll-behavior-y: auto;
     -webkit-overflow-scrolling: touch;
     touch-action: pan-x pan-y;
 }
