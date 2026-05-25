@@ -12,86 +12,46 @@
     const TOOLTIP_HIDE_DELAY_MS = 120;
     const COMPACT_VIEWPORT_WIDTH = 760;
     const COMPACT_BOARD_MIN_SCALE = 0.62;
-    const STATS_TAB_SCALING = "scaling";
-    const STAT_SCALING_ORDER = ["Agility", "Dexterity", "Eagle", "Endurance", "Fortitude", "Strength", "Vigor"];
-    const STAT_SCALING_BY_CLASS = {
-        Knight: {
-            Agility: "50%",
-            Dexterity: "50%",
-            Eagle: "50%",
-            Endurance: "175%",
-            Fortitude: "175%",
-            Strength: "150%",
-            Vigor: "200%"
+    const STAT_MATRIX_COLUMNS = ["Squire", "Samurai", "Knight", "Rogue", "Dreadnought", "Shield Hero", "Barbarian", "Jester", "Monk"];
+    const STAT_MATRIX_ROWS = [
+        {
+            stat: "Agility / movement speed",
+            values: ["100%", "140%", "80%", "160%", "60%", "90%", "100%", "140%", "130%"]
         },
-        Rogue: {
-            Agility: "175%",
-            Dexterity: "175%",
-            Eagle: "200%",
-            Endurance: "50%",
-            Fortitude: "50%",
-            Strength: "150%",
-            Vigor: "50%"
+        {
+            stat: "Chance / better loot",
+            values: ["100%", "90%", "80%", "120%", "70%", "100%", "80%", "190%", "100%"]
         },
-        Dreadnought: {
-            Agility: "50%",
-            Dexterity: "150%",
-            Eagle: "50%",
-            Endurance: "175%",
-            Fortitude: "50%",
-            Strength: "175%",
-            Vigor: "200%"
+        {
+            stat: "Dexterity / action speed",
+            values: ["100%", "150%", "90%", "150%", "70%", "80%", "100%", "130%", "150%"]
         },
-        Barbarian: {
-            Agility: "150%",
-            Dexterity: "50%",
-            Eagle: "50%",
-            Endurance: "50%",
-            Fortitude: "150%",
-            Strength: "250%",
-            Vigor: "150%"
+        {
+            stat: "Eagle / critical strike chance",
+            values: ["100%", "140%", "80%", "150%", "80%", "70%", "120%", "160%", "100%"]
         },
-        Jester: {
-            Agility: "200%",
-            Dexterity: "200%",
-            Eagle: "200%",
-            Endurance: "50%",
-            Fortitude: "50%",
-            Strength: "50%",
-            Vigor: "100%"
+        {
+            stat: "Endurance / stamina",
+            values: ["100%", "100%", "140%", "90%", "160%", "140%", "150%", "90%", "130%"]
         },
-        Samurai: {
-            Agility: "150%",
-            Dexterity: "200%",
-            Eagle: "50%",
-            Endurance: "50%",
-            Fortitude: "175%",
-            Strength: "175%",
-            Vigor: "50%"
+        {
+            stat: "Fortitude / forceshield strength",
+            values: ["100%", "80%", "150%", "70%", "170%", "170%", "80%", "60%", "110%"]
         },
-        Monk: {
-            Agility: "200%",
-            Dexterity: "150%",
-            Eagle: "150%",
-            Endurance: "200%",
-            Fortitude: "50%",
-            Strength: "50%",
-            Vigor: "50%"
+        {
+            stat: "Strength / damage",
+            values: ["100%", "140%", "160%", "100%", "170%", "110%", "190%", "70%", "100%"]
         },
-        "Shield Hero": {
-            Agility: "50%",
-            Dexterity: "50%",
-            Eagle: "150%",
-            Endurance: "175%",
-            Fortitude: "225%",
-            Strength: "50%",
-            Vigor: "150%"
+        {
+            stat: "Vigor / hp",
+            values: ["100%", "60%", "120%", "60%", "120%", "140%", "180%", "60%", "80%"]
+        },
+        {
+            stat: "TOTAL",
+            values: ["800%", "900%", "900%", "900%", "900%", "900%", "900%", "900%", "900%"],
+            isTotal: true
         }
-    };
-    const STAT_SCALING_CLASS_ALIASES = {
-        Assassin: "Rogue",
-        Viking: "Barbarian"
-    };
+    ];
 
     const state = {
         data: null,
@@ -99,7 +59,6 @@
         selectedNodeId: null,
         previewRanks: loadPreviewRanks(),
         previewLevel: loadPreviewLevel(),
-        activeStatsTab: STATS_TAB_SCALING,
         tooltipHideTimer: 0
     };
 
@@ -107,7 +66,12 @@
 
     async function initialize() {
         const page = document.body.dataset.page;
-        if (page !== "tree" && page !== "stats") {
+        if (page === "stats") {
+            initializeStatsPage();
+            return;
+        }
+
+        if (page !== "tree") {
             initializeIndexPage();
             return;
         }
@@ -122,11 +86,6 @@
 
         if (!state.data || !Array.isArray(state.data.classes) || state.data.classes.length === 0) {
             showStateMessage("No talent tree data was found. Run the Unity menu action Tools > Talent Trees > Export Web Preview Data to generate data/talent-trees.json.");
-            return;
-        }
-
-        if (page === "stats") {
-            initializeStatsPage();
             return;
         }
 
@@ -245,11 +204,9 @@
     }
 
     function initializeStatsPage() {
-        const classId = getRequestedClassId();
-        bindStatsTabs();
-
-        const tree = findTree(classId) || state.data.classes[0];
-        setCurrentTree(tree.classId);
+        renderStatsHero();
+        renderRelatedPageLink();
+        renderStatScaling();
     }
 
     function bindViewerButtons() {
@@ -314,16 +271,6 @@
             });
             playerLevelInput.addEventListener("blur", renderLevelControls);
         }
-    }
-
-    function bindStatsTabs() {
-        document.querySelectorAll("[data-stats-tab]").forEach(function (button) {
-            button.addEventListener("click", function () {
-                setActiveStatsTab(button.dataset.statsTab);
-            });
-        });
-
-        renderStatsTabs();
     }
 
     function bindTooltipDismiss() {
@@ -433,29 +380,7 @@
         renderRelatedPageLink();
         renderLevelControls();
         renderTreeStats();
-        renderStatScaling();
-        renderStatsTabs();
         renderBoard();
-    }
-
-    function setActiveStatsTab(tabName) {
-        state.activeStatsTab = tabName === STATS_TAB_SCALING ? STATS_TAB_SCALING : STATS_TAB_SCALING;
-        renderStatsTabs();
-    }
-
-    function renderStatsTabs() {
-        const activeTab = state.activeStatsTab;
-        document.querySelectorAll("[data-stats-tab]").forEach(function (button) {
-            const isActive = button.dataset.statsTab === activeTab;
-            button.classList.toggle("is-active", isActive);
-            button.setAttribute("aria-selected", isActive ? "true" : "false");
-        });
-
-        document.querySelectorAll("[data-stats-panel]").forEach(function (panel) {
-            const isActive = panel.dataset.statsPanel === activeTab;
-            panel.classList.toggle("is-active", isActive);
-            panel.hidden = !isActive;
-        });
     }
 
     function renderStatScaling() {
@@ -465,42 +390,42 @@
         }
 
         grid.replaceChildren();
-        if (!state.tree) {
-            return;
-        }
+        const scrollWrap = document.createElement("div");
+        scrollWrap.className = "stats-matrix-scroll";
 
-        const scalingKey = resolveStatScalingClassKey(state.tree.classId);
-        const scaling = STAT_SCALING_BY_CLASS[scalingKey];
-        if (!scaling) {
-            grid.appendChild(createElement("p", "stats-scaling-empty", "No stat scaling data is available for this class yet."));
-            return;
-        }
+        const table = document.createElement("table");
+        table.className = "stats-matrix";
 
-        const card = document.createElement("article");
-        card.className = "stat-scaling-card";
+        const thead = document.createElement("thead");
+        const headerRow = document.createElement("tr");
+        headerRow.appendChild(createTableHeadingCell("Stat", "col", "is-sticky"));
+        STAT_MATRIX_COLUMNS.forEach(function (label) {
+            headerRow.appendChild(createTableHeadingCell(label, "col"));
+        });
+        thead.appendChild(headerRow);
 
-        const header = document.createElement("div");
-        header.className = "stat-scaling-card-header";
-        header.appendChild(createElement("div", "eyebrow", "Stat Scaling"));
-        header.appendChild(createElement("h3", "stat-scaling-card-title", scalingKey));
-        card.appendChild(header);
+        const tbody = document.createElement("tbody");
+        STAT_MATRIX_ROWS.forEach(function (rowData) {
+            const row = document.createElement("tr");
+            if (rowData.isTotal) {
+                row.className = "is-total";
+            }
 
-        const rows = document.createElement("div");
-        rows.className = "stat-scaling-rows";
-        STAT_SCALING_ORDER.forEach(function (statName) {
-            const row = document.createElement("div");
-            row.className = "stat-scaling-row";
-            row.appendChild(createElement("span", "stat-scaling-label", statName));
-            row.appendChild(createElement("span", "stat-scaling-value", scaling[statName] || "0%"));
-            rows.appendChild(row);
+            row.appendChild(createTableHeadingCell(rowData.stat, "row", "is-sticky"));
+            rowData.values.forEach(function (value) {
+                const cell = document.createElement("td");
+                cell.className = "stats-matrix-value";
+                cell.textContent = value;
+                row.appendChild(cell);
+            });
+
+            tbody.appendChild(row);
         });
 
-        card.appendChild(rows);
-        grid.appendChild(card);
-    }
-
-    function resolveStatScalingClassKey(classId) {
-        return STAT_SCALING_CLASS_ALIASES[classId] || classId;
+        table.appendChild(thead);
+        table.appendChild(tbody);
+        scrollWrap.appendChild(table);
+        grid.appendChild(scrollWrap);
     }
 
     function renderClassRail() {
@@ -540,20 +465,6 @@
             treeHero.style.setProperty("--accent-color", state.tree.accentColor || "rgba(217, 168, 79, 0.24)");
         }
 
-        if (page === "stats") {
-            const statsLabel = resolveStatScalingClassKey(state.tree.classId);
-            if (treeEyebrow) {
-                treeEyebrow.textContent = "Stats";
-            }
-            if (treeTitle) {
-                treeTitle.textContent = statsLabel + " Stats";
-            }
-            if (treeDescription) {
-                treeDescription.textContent = "Review how " + statsLabel + " scales with each core stat in Escape From Wrathguard.";
-            }
-            return;
-        }
-
         if (treeEyebrow) {
             treeEyebrow.textContent = state.tree.displayName || state.tree.classId;
         }
@@ -569,13 +480,12 @@
 
     function renderRelatedPageLink() {
         const relatedPageLink = document.getElementById("relatedPageLink");
-        if (!relatedPageLink || !state.tree) {
+        if (!relatedPageLink) {
             return;
         }
 
         const page = document.body.dataset.page;
-        const nextPath = page === "stats" ? "talent-tree.html" : "stats.html";
-        relatedPageLink.href = nextPath + "?class=" + encodeURIComponent(state.tree.classId);
+        relatedPageLink.href = page === "stats" ? "talent-tree.html" : "stats.html";
     }
 
     function resolveClassRailLabel(tree) {
@@ -583,11 +493,39 @@
             return "Class";
         }
 
-        if (document.body.dataset.page === "stats") {
-            return resolveStatScalingClassKey(tree.classId);
-        }
-
         return tree.displayName || tree.classId;
+    }
+
+    function renderStatsHero() {
+        const treeHero = document.getElementById("treeHero");
+        const treeEyebrow = document.getElementById("treeEyebrow");
+        const treeTitle = document.getElementById("treeTitle");
+        const treeDescription = document.getElementById("treeDescription");
+
+        if (treeHero) {
+            treeHero.style.setProperty("--accent-color", "rgba(217, 168, 79, 0.24)");
+        }
+        if (treeEyebrow) {
+            treeEyebrow.textContent = "Stats";
+        }
+        if (treeTitle) {
+            treeTitle.textContent = "All Class Stats";
+        }
+        if (treeDescription) {
+            treeDescription.textContent = "Compare every class at once across movement, loot, action speed, crit chance, stamina, forceshield strength, damage, and health.";
+        }
+    }
+
+    function createTableHeadingCell(text, scope, className) {
+        const cell = document.createElement("th");
+        if (scope) {
+            cell.scope = scope;
+        }
+        if (className) {
+            cell.className = className;
+        }
+        cell.textContent = text;
+        return cell;
     }
 
     function renderTreeStats() {

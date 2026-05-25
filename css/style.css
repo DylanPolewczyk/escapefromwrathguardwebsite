@@ -869,6 +869,13 @@ button {
     gap: 1rem;
 }
 
+.viewer-main-stats {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+        "hero"
+        "board";
+}
+
 .class-rail-panel,
 .tree-hero,
 .board-panel {
@@ -951,6 +958,77 @@ button {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     gap: 1rem;
+}
+
+.stats-matrix-scroll {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 0.35rem;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+}
+
+.stats-matrix {
+    width: max(100%, 1180px);
+    border-collapse: collapse;
+    border-spacing: 0;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 26%),
+        rgba(12, 10, 8, 0.92);
+}
+
+.stats-matrix th,
+.stats-matrix td {
+    min-width: 110px;
+    padding: 0.9rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    text-align: center;
+    white-space: nowrap;
+}
+
+.stats-matrix thead th {
+    color: var(--gold);
+    font-family: "Cinzel", Georgia, serif;
+    font-size: 0.9rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: rgba(25, 18, 12, 0.98);
+}
+
+.stats-matrix tbody th {
+    min-width: 250px;
+    color: var(--text);
+    text-align: left;
+    font-weight: 600;
+    background: rgba(18, 14, 9, 0.98);
+}
+
+.stats-matrix .is-sticky {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+}
+
+.stats-matrix thead .is-sticky {
+    z-index: 2;
+}
+
+.stats-matrix-value {
+    color: var(--muted);
+    font-family: "Cinzel", Georgia, serif;
+    letter-spacing: 0.05em;
+}
+
+.stats-matrix tbody tr:nth-child(odd) td {
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.stats-matrix tbody tr.is-total th,
+.stats-matrix tbody tr.is-total td {
+    color: var(--text);
+    font-weight: 700;
+    background: linear-gradient(135deg, rgba(217, 168, 79, 0.16), rgba(184, 78, 38, 0.14));
 }
 
 .stat-scaling-card {
