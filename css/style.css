@@ -263,54 +263,69 @@ button {
     width: 36%;
     height: 112%;
     background:
-        linear-gradient(180deg, rgba(161, 255, 232, 0.32), rgba(161, 255, 232, 0.1) 30%, rgba(161, 255, 232, 0.02) 60%, transparent),
-        repeating-linear-gradient(180deg, rgba(170, 255, 236, 0.14) 0 10px, rgba(59, 201, 180, 0.03) 10px 22px, transparent 22px 34px);
-    clip-path: polygon(42% 0, 58% 0, 100% 100%, 0 100%);
-    filter: blur(1px);
-    opacity: 0.54;
+        radial-gradient(circle at 32% 18%, rgba(180, 255, 238, 0.12) 0 5%, transparent 12%),
+        radial-gradient(circle at 58% 26%, rgba(180, 255, 238, 0.1) 0 7%, transparent 14%),
+        radial-gradient(circle at 46% 42%, rgba(123, 255, 222, 0.12) 0 18%, transparent 34%),
+        radial-gradient(circle at 62% 64%, rgba(123, 255, 222, 0.1) 0 16%, transparent 30%),
+        radial-gradient(circle at 34% 78%, rgba(123, 255, 222, 0.08) 0 12%, transparent 24%);
+    border-radius: 46% 54% 40% 60% / 28% 34% 66% 72%;
+    filter: blur(18px);
+    opacity: 0.26;
     transform-origin: top center;
-    animation: veil-surge 5.2s ease-in-out infinite;
+    mix-blend-mode: screen;
+    animation: veil-surge 6.2s ease-in-out infinite;
+    mask-image: radial-gradient(circle at 50% 46%, black 0 42%, transparent 76%);
 }
 
 .ion-veil-one {
-    top: 16%;
-    right: 8%;
-    transform: rotate(9deg);
+    top: 14%;
+    right: 7%;
+    transform: rotate(6deg);
 }
 
 .ion-veil-two {
-    top: 10%;
-    right: 18%;
-    width: 28%;
-    opacity: 0.38;
-    transform: rotate(17deg);
+    top: 8%;
+    right: 20%;
+    width: 24%;
+    opacity: 0.18;
+    transform: rotate(12deg);
     animation-delay: -1.8s;
 }
 
 .contagion-stream {
-    inset: -8% auto -12% auto;
-    width: 22rem;
+    width: 18rem;
+    height: 28rem;
     background:
-        repeating-linear-gradient(180deg, rgba(142, 255, 228, 0.18) 0 14px, rgba(142, 255, 228, 0.02) 14px 34px),
-        linear-gradient(180deg, rgba(165, 255, 234, 0.18), rgba(53, 171, 153, 0.08) 38%, transparent 68%);
-    filter: blur(2px);
-    opacity: 0.36;
-    animation: contagion-fall 7.5s linear infinite;
+        radial-gradient(circle at 50% 10%, rgba(178, 255, 236, 0.24) 0 4%, transparent 10%),
+        radial-gradient(circle at 44% 24%, rgba(137, 255, 224, 0.2) 0 7%, transparent 14%),
+        radial-gradient(circle at 58% 42%, rgba(137, 255, 224, 0.16) 0 9%, transparent 18%),
+        radial-gradient(circle at 36% 64%, rgba(137, 255, 224, 0.14) 0 8%, transparent 17%),
+        radial-gradient(circle at 60% 82%, rgba(137, 255, 224, 0.12) 0 10%, transparent 18%),
+        linear-gradient(104deg, transparent 0 42%, rgba(137, 255, 224, 0.16) 44% 46%, transparent 48% 100%),
+        linear-gradient(82deg, transparent 0 30%, rgba(137, 255, 224, 0.14) 32% 34%, transparent 36% 100%),
+        linear-gradient(126deg, transparent 0 56%, rgba(137, 255, 224, 0.12) 58% 60%, transparent 62% 100%);
+    border-radius: 48% 52% 50% 50% / 10% 10% 90% 90%;
+    filter: blur(9px);
+    opacity: 0.3;
+    mix-blend-mode: screen;
+    mask-image: radial-gradient(ellipse at 50% 8%, black 0 12%, rgba(0, 0, 0, 0.95) 20%, rgba(0, 0, 0, 0.62) 42%, transparent 78%);
+    animation: contagion-fall 6.8s ease-in-out infinite;
 }
 
 .contagion-stream-one {
-    top: 6%;
+    top: 8%;
     right: 10%;
-    transform: rotate(10deg);
+    transform: rotate(8deg);
 }
 
 .contagion-stream-two {
-    top: 12%;
-    right: 28%;
-    width: 16rem;
-    opacity: 0.24;
+    top: 14%;
+    right: 24%;
+    width: 12rem;
+    height: 20rem;
+    opacity: 0.18;
     transform: rotate(14deg);
-    animation-duration: 9.5s;
+    animation-duration: 8.6s;
     animation-delay: -1.3s;
 }
 
@@ -319,15 +334,16 @@ button {
     width: 34%;
     height: 30%;
     background:
-        radial-gradient(circle at 12% 45%, rgba(156, 255, 231, 0.2) 0 6px, transparent 8px),
-        radial-gradient(circle at 28% 62%, rgba(156, 255, 231, 0.18) 0 5px, transparent 7px),
-        radial-gradient(circle at 42% 34%, rgba(156, 255, 231, 0.16) 0 7px, transparent 9px),
-        radial-gradient(circle at 58% 55%, rgba(156, 255, 231, 0.18) 0 5px, transparent 7px),
-        radial-gradient(circle at 72% 36%, rgba(156, 255, 231, 0.14) 0 6px, transparent 8px),
-        linear-gradient(120deg, rgba(156, 255, 231, 0.12), transparent 36%);
-    filter: blur(0.4px);
-    opacity: 0.72;
-    animation: contagion-cluster 8s ease-in-out infinite;
+        radial-gradient(circle at 46% 50%, rgba(211, 255, 245, 0.34) 0 8%, rgba(124, 255, 221, 0.2) 9% 15%, transparent 17%),
+        radial-gradient(circle at 24% 42%, rgba(149, 255, 228, 0.28) 0 4.5%, transparent 7%),
+        radial-gradient(circle at 61% 28%, rgba(149, 255, 228, 0.2) 0 4%, transparent 7%),
+        radial-gradient(circle at 72% 58%, rgba(149, 255, 228, 0.24) 0 5%, transparent 8%),
+        radial-gradient(circle at 34% 74%, rgba(149, 255, 228, 0.22) 0 5%, transparent 9%),
+        conic-gradient(from 90deg at 48% 50%, rgba(149, 255, 228, 0.18), transparent 14%, rgba(149, 255, 228, 0.1) 28%, transparent 42%, rgba(149, 255, 228, 0.16) 56%, transparent 72%, rgba(149, 255, 228, 0.12) 88%, transparent);
+    filter: blur(0.3px);
+    opacity: 0.82;
+    mix-blend-mode: screen;
+    animation: contagion-cluster 6.4s cubic-bezier(0.2, 0.7, 0.2, 1) infinite;
 }
 
 .cyber-contagion::before,
@@ -339,16 +355,27 @@ button {
 
 .cyber-contagion::before {
     background:
-        linear-gradient(90deg, transparent 0 11%, rgba(149, 255, 228, 0.2) 11% 12%, transparent 12% 31%, rgba(149, 255, 228, 0.18) 31% 32%, transparent 32% 59%, rgba(149, 255, 228, 0.16) 59% 60%, transparent 60%),
-        linear-gradient(180deg, transparent 0 18%, rgba(149, 255, 228, 0.12) 18% 19%, transparent 19% 44%, rgba(149, 255, 228, 0.12) 44% 45%, transparent 45% 100%);
-    mask-image: radial-gradient(circle at 42% 52%, black 0 48%, transparent 78%);
-    opacity: 0.6;
+        radial-gradient(circle at 18% 42%, rgba(149, 255, 228, 0.36) 0 5%, transparent 7%),
+        radial-gradient(circle at 78% 36%, rgba(149, 255, 228, 0.28) 0 4%, transparent 6%),
+        radial-gradient(circle at 64% 72%, rgba(149, 255, 228, 0.26) 0 5%, transparent 7%),
+        linear-gradient(28deg, transparent 0 34%, rgba(149, 255, 228, 0.18) 36% 38%, transparent 40% 100%),
+        linear-gradient(116deg, transparent 0 38%, rgba(149, 255, 228, 0.16) 39% 41%, transparent 42% 100%),
+        linear-gradient(82deg, transparent 0 46%, rgba(149, 255, 228, 0.12) 47% 48%, transparent 49% 100%);
+    filter: blur(0.8px);
+    opacity: 0.82;
+    animation: virus-twitch 4.2s steps(3, end) infinite;
 }
 
 .cyber-contagion::after {
-    border: 1px solid rgba(149, 255, 228, 0.14);
-    clip-path: polygon(9% 46%, 19% 30%, 39% 34%, 53% 18%, 73% 28%, 89% 16%, 84% 48%, 95% 66%, 71% 74%, 58% 92%, 31% 78%, 18% 88%, 14% 64%);
-    box-shadow: 0 0 18px rgba(92, 247, 215, 0.14);
+    inset: -12%;
+    background:
+        radial-gradient(circle at 42% 50%, rgba(149, 255, 228, 0.2) 0 20%, transparent 34%),
+        radial-gradient(circle at 22% 40%, rgba(149, 255, 228, 0.16) 0 12%, transparent 24%),
+        radial-gradient(circle at 76% 58%, rgba(149, 255, 228, 0.18) 0 14%, transparent 28%),
+        radial-gradient(circle at 56% 76%, rgba(149, 255, 228, 0.14) 0 10%, transparent 22%);
+    filter: blur(10px);
+    opacity: 0.48;
+    animation: virus-bloom 5.8s ease-in-out infinite;
 }
 
 .cyber-contagion-one {
@@ -1176,42 +1203,89 @@ button {
 
 @keyframes veil-surge {
     0% {
-        opacity: 0.28;
-        transform: rotate(9deg) scaleY(0.94);
+        opacity: 0.12;
+        transform: rotate(6deg) scale(0.9, 0.88);
     }
 
     50% {
-        opacity: 0.66;
-        transform: rotate(11deg) scaleY(1.04);
-        filter: blur(2px);
+        opacity: 0.3;
+        transform: rotate(10deg) scale(1.06, 1.08);
+        filter: blur(22px);
     }
 
     100% {
-        opacity: 0.28;
-        transform: rotate(9deg) scaleY(0.94);
+        opacity: 0.12;
+        transform: rotate(6deg) scale(0.9, 0.88);
     }
 }
 
 @keyframes contagion-fall {
     0% {
-        transform: translate3d(0, -2rem, 0) rotate(10deg);
+        transform: translate3d(0, -1.4rem, 0) rotate(8deg) scale(0.92);
+        opacity: 0.08;
+    }
+
+    40% {
+        opacity: 0.34;
     }
 
     100% {
-        transform: translate3d(-2rem, 3rem, 0) rotate(12deg);
+        transform: translate3d(-1.2rem, 2.4rem, 0) rotate(12deg) scale(1.08);
+        opacity: 0.04;
     }
 }
 
 @keyframes contagion-cluster {
     0%,
     100% {
-        transform: translate3d(0, 0, 0) scale(1);
-        opacity: 0.5;
+        transform: translate3d(0, 0, 0) scale(0.94);
+        opacity: 0.46;
+    }
+
+    35% {
+        transform: translate3d(0.7rem, -0.35rem, 0) scale(1.08);
+        opacity: 0.88;
+    }
+
+    60% {
+        transform: translate3d(1.25rem, -0.9rem, 0) scale(1.16);
+        opacity: 0.94;
+    }
+
+    78% {
+        transform: translate3d(0.25rem, 0.2rem, 0) scale(1.02);
+        opacity: 0.64;
+    }
+}
+
+@keyframes virus-twitch {
+    0%,
+    100% {
+        transform: rotate(0deg) scale(0.98);
+        opacity: 0.62;
+    }
+
+    30% {
+        transform: rotate(-4deg) scale(1.02);
+        opacity: 0.9;
+    }
+
+    65% {
+        transform: rotate(3deg) scale(1.06);
+        opacity: 0.78;
+    }
+}
+
+@keyframes virus-bloom {
+    0%,
+    100% {
+        transform: scale(0.86);
+        opacity: 0.22;
     }
 
     50% {
-        transform: translate3d(1rem, -0.75rem, 0) scale(1.08);
-        opacity: 0.86;
+        transform: scale(1.18);
+        opacity: 0.58;
     }
 }
 
@@ -1300,23 +1374,25 @@ button {
     }
 
     .ion-veil-one {
-        width: 48%;
-        right: 0;
+        width: 42%;
+        right: 2%;
     }
 
     .ion-veil-two {
-        width: 36%;
-        right: 16%;
+        width: 30%;
+        right: 18%;
     }
 
     .contagion-stream-one {
         right: 0;
-        width: 14rem;
+        width: 10rem;
+        height: 18rem;
     }
 
     .contagion-stream-two {
         right: 20%;
-        width: 10rem;
+        width: 7rem;
+        height: 14rem;
     }
 
     .cyber-contagion-one {
