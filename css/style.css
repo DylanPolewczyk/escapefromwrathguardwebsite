@@ -1621,6 +1621,7 @@ body[data-page="contact"] {
     padding-bottom: 0.25rem;
     overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y;
 }
 
 .board-scroll.is-scrollable {
@@ -1714,6 +1715,7 @@ body[data-page="contact"] {
     color: var(--text);
     text-align: left;
     cursor: pointer;
+    touch-action: pan-x pan-y;
 }
 
 .talent-node.is-active {
