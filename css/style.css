@@ -433,6 +433,7 @@ button {
 .home-nav-menu {
     position: relative;
     margin-left: auto;
+    z-index: 5;
 }
 
 .landing-brand-mark,
@@ -488,6 +489,7 @@ button {
     min-width: 220px;
     opacity: 0;
     visibility: hidden;
+    pointer-events: none;
     transform: translateY(-0.35rem);
     transition: opacity 180ms ease, transform 180ms ease, visibility 180ms ease;
 }
@@ -495,6 +497,7 @@ button {
 .home-tabs.is-open {
     opacity: 1;
     visibility: visible;
+    pointer-events: auto;
     transform: translateY(0);
 }
 
@@ -1708,12 +1711,21 @@ button {
     }
 
     .landing-banner-top {
-        flex-direction: column;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
         align-items: start;
     }
 
+    .home-nav-menu {
+        margin-left: 0;
+        justify-self: end;
+        align-self: start;
+    }
+
     .home-tabs {
-        min-width: min(240px, calc(100vw - 2.5rem));
+        min-width: min(240px, calc(100vw - 2rem));
+        max-width: calc(100vw - 2rem);
+        top: calc(100% + 0.5rem);
     }
 
     .home-tab {

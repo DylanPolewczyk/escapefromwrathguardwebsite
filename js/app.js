@@ -202,8 +202,17 @@
         });
 
         homeTabs.querySelectorAll("a").forEach(function (link) {
-            link.addEventListener("click", function () {
+            link.addEventListener("click", function (event) {
+                const href = link.getAttribute("href") || "";
+                const isHashLink = href.charAt(0) === "#";
+
                 setOpen(false);
+                if (isHashLink) {
+                    return;
+                }
+
+                event.preventDefault();
+                window.location.assign(link.href);
             });
         });
 
