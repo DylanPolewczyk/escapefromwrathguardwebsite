@@ -64,6 +64,16 @@
 
     document.addEventListener("DOMContentLoaded", initialize);
 
+    document.addEventListener("click", function (event) {
+        var discordLink = event.target.closest(".js-discord-link");
+        if (!discordLink) {
+            return;
+        }
+
+        event.preventDefault();
+        alert("We will open the Discord when we are ready :)");
+    });
+
     async function initialize() {
         const page = document.body.dataset.page;
         if (page === "stats") {
